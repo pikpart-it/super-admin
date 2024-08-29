@@ -4,3 +4,11 @@ export { default as AppRoleMasterSetup } from "./Containers/AppRoleMaster/AppRol
 export { default as AppRoleMasterSetupList } from "./Containers/AppRoleMaster/AppRoleMasterSetupList";
 export { default as CreateRoleMaster } from "./Containers/RoleMaster/CreateRoleMaster";
 export { default as RoleMasterList } from "./Containers/RoleMaster/RoleMasterList";
+export { default as CreateAppModuleMaster } from "./Containers/AppModuleMaster/CreateAppModuleMaster";
+export { default as ListAppModuleMaster } from "./Containers/AppModuleMaster/ListAppModuleMaster";
+export { default as ListModulePageMaster } from "./Containers/ModulePageMaster/ListModulePageMaster";
+export { default as CreateModulePageMaster } from "./Containers/ModulePageMaster/CreateModulePageMaster";
+export { default as CreateMasterConfiguration } from "./Containers/MasterConfiguration/CreateMasterConfiguration";
+export { default as ListMasterConfiguration } from "./Containers/MasterConfiguration/ListMasterConfiguration";
+export { default as CreateModule } from "./Containers/ModuleMaster/CreateModule";
+export { default as ListModules } from "./Containers/ModuleMaster/ListModules";

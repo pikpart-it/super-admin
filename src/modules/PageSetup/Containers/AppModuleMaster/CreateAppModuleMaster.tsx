@@ -1,4 +1,9 @@
-import React, { useEffect, useState } from "react";
+import { Button, FormControlLabel, Switch } from "@mui/material";
+import { useEffect, useState } from "react";
+import { FormInput, MyFormSelect } from "../../../../components/Forms/Form";
+import { Loader } from "../../../../components/Loader";
+import MsgCard from "../../../../components/MsgCard";
+import { H2Heading } from "../../../../components/styled";
 import { config } from "../../../../config/config";
 import {
   getAuthorized,
@@ -6,31 +11,35 @@ import {
   putAuthorized,
 } from "../../../../services";
 import { FlexDiv } from "../../../../style/styled";
-import { H2Heading } from "../../../../components/styled";
-import { FormInput, MyFormSelect } from "../../../../components/Forms/Form";
-import { Button } from "@mui/material";
 import { Container } from "../RoleMaster/CreateRoleMaster";
-import { roleTypes } from "../RoleMaster/RoleMasterList";
-import { appRoleMasterSetupTypes } from "./AppRoleMasterSetupList";
-import { Loader } from "../../../../components/Loader";
-import MsgCard from "../../../../components/MsgCard";
 import { appMasterTypes } from "../AppMaster/ListAppMaster";
+import { appModuleMasterTypes } from "./ListAppModuleMaster";
+import { moduleMasterTypes } from "../ModuleMaster/ListModules";
 
-const AppRoleMasterSetup = ({ history }) => {
-  const dataForEdit: appRoleMasterSetupTypes = history?.location?.state;
+const CreateAppModuleMaster = ({ history }) => {
+  const dataForEdit: appModuleMasterTypes = history?.location?.state;
+  const [appMasterList, setAppMasterList] = useState<appMasterTypes[]>([]);
+  const [moduleMasterList, setModuleMasterList] = useState<moduleMasterTypes[]>(
+    []
+  );
   const [loader, setloader] = useState({
     isLoading: false,
     error: false,
     msg: "",
   });
-  const [rolesList, setRolesList] = useState<roleTypes[]>([]);
-  const [appMasterList, setAppMasterList] = useState<appMasterTypes[]>([]);
-  const [appRoleMaster, setAppRoleMaster] = useState({
-    app_name: { appName: "", id: 0, appId: "" },
-    app_id: "",
-    role_name: { roleName: "", id: 0 },
-    role_id: "",
+  const [appModuleMaster, setAppModuleMaster] = useState({
+    app_name: { appName: "", appId: "", id: 0 },
+    module_name: { moduleName: "", id: 0, routeKey: "" },
   });
+
+  const getModuleMaster = async () => {
+    let url = `${config.baseUrl}/superAdmin/moduleMasters`;
+
+    try {
+      const { data } = await getAuthorized(url);
+      setModuleMasterList(data?.data);
+    } catch (error) {}
+  };
   const getAppMasterList = async () => {
     let url = `${config.baseUrl}/superAdmin/appMasters`;
 
@@ -39,47 +48,41 @@ const AppRoleMasterSetup = ({ history }) => {
       setAppMasterList(data?.data);
     } catch (error) {}
   };
-  const getRolesList = async () => {
-    let url = `${config.baseUrl}/superAdmin/roleMasters`;
-
-    try {
-      const { data } = await getAuthorized(url);
-      setRolesList(data?.data);
-    } catch (error) {}
-  };
   const onChange = (target) => {
     const { name, value } = target;
-    if (name === "role_name") {
-      setAppRoleMaster({ ...appRoleMaster, [name]: value });
-    } else {
-      setAppRoleMaster({
-        ...appRoleMaster,
+    if (name === "app_name") {
+      setAppModuleMaster({
+        ...appModuleMaster,
         [name]: value,
       });
+    } else {
+      setAppModuleMaster({ ...appModuleMaster, [name]: value });
     }
   };
 
   const onSubmit = async () => {
     setloader({ ...loader, isLoading: true });
-
+    const { app_name, module_name } = appModuleMaster;
     const payload = {
-      ...appRoleMaster,
-      role_name: appRoleMaster?.role_name?.roleName,
-      role_id: appRoleMaster?.role_name?.id,
-      app_name: appRoleMaster?.app_name?.appId,
-      app_id: appRoleMaster?.app_name?.id,
+      ...appModuleMaster,
+      app_name: app_name?.appId,
+      app_id: app_name?.id,
+      module_name: module_name?.moduleName,
+      module_id: module_name?.id,
+      route_key: module_name?.routeKey,
     };
     try {
       let res;
       let url;
 
       if (dataForEdit?.id) {
-        url = `${config.baseUrl}/superAdmin/updateAppRoleMaster `;
+        url = `${config.baseUrl}/superAdmin/updateAppModuleMaster`;
         res = await putAuthorized(url, { ...payload, id: dataForEdit?.id });
       } else {
-        url = `${config.baseUrl}/superAdmin/addAppRoleMaster`;
+        url = `${config.baseUrl}/superAdmin/addAppModuleMaster`;
         res = await postAuthorized(url, payload);
       }
+
       setloader({
         ...loader,
         isLoading: false,
@@ -89,40 +92,29 @@ const AppRoleMasterSetup = ({ history }) => {
       setTimeout(() => {
         setloader({ ...loader, msg: "" });
       }, 5000);
-    } catch (error) {
-      setloader({
-        ...loader,
-        isLoading: false,
-        error: true,
-        msg: "Something Went Wrong",
-      });
-      setTimeout(() => {
-        setloader({ ...loader, msg: "" });
-      }, 5000);
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {
     if (dataForEdit) {
-      setAppRoleMaster({
-        ...appRoleMaster,
-        app_name: appMasterList?.find((i) => i?.id === dataForEdit?.appId)!,
-        role_name: rolesList?.find(
-          (i) => i?.roleName === dataForEdit?.roleName
+      setAppModuleMaster({
+        ...appModuleMaster,
+        module_name: moduleMasterList?.find(
+          (i) => i?.id === dataForEdit?.moduleId
         )!,
+        app_name: appMasterList?.find((i) => i?.id === dataForEdit?.appId)!,
       });
     }
-  }, [dataForEdit, rolesList, appMasterList]);
-
+  }, [dataForEdit, appMasterList, moduleMasterList]);
   useEffect(() => {
-    getRolesList();
     getAppMasterList();
+    getModuleMaster();
   }, []);
 
   return (
     <>
       <FlexDiv justifyContentCenter>
-        <H2Heading>Create App Role Master</H2Heading>
+        <H2Heading>App Module Master</H2Heading>
       </FlexDiv>
 
       <FlexDiv justifyContentCenter>
@@ -132,28 +124,27 @@ const AppRoleMasterSetup = ({ history }) => {
               name="app_name"
               list={[]}
               fieldErrors={{}}
-              value={appRoleMaster?.app_name}
               selectProps={{
                 renderValue: (val) => val?.appName,
               }}
+              value={appModuleMaster?.app_name}
               onChange={(target) => onChange(target)}
               label="App Name"
               options={appMasterList}
             />
           </Container>
-
           <Container>
             <MyFormSelect
-              name="role_name"
+              name="module_name"
               list={[]}
               fieldErrors={{}}
-              value={appRoleMaster?.role_name}
               selectProps={{
-                renderValue: (val) => val?.roleName,
+                renderValue: (val) => val?.moduleName,
               }}
+              value={appModuleMaster?.module_name}
               onChange={(target) => onChange(target)}
-              label="Role Name"
-              options={rolesList}
+              label="Module Name"
+              options={moduleMasterList}
             />
           </Container>
         </FlexDiv>
@@ -179,4 +170,4 @@ const AppRoleMasterSetup = ({ history }) => {
   );
 };
 
-export default AppRoleMasterSetup;
+export default CreateAppModuleMaster;

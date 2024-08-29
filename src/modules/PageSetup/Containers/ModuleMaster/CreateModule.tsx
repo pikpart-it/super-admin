@@ -1,4 +1,4 @@
-import { Button, FormControlLabel, Switch } from "@mui/material";
+import { Button } from "@mui/material";
 import { useEffect, useState } from "react";
 import { FormInput } from "../../../../components/Forms/Form";
 import { Loader } from "../../../../components/Loader";
@@ -7,46 +7,49 @@ import { H2Heading } from "../../../../components/styled";
 import { config } from "../../../../config/config";
 import { postAuthorized, putAuthorized } from "../../../../services";
 import { FlexDiv } from "../../../../style/styled";
-import { appMasterTypes } from "./ListAppMaster";
 import { Container } from "../RoleMaster/CreateRoleMaster";
+import { moduleMasterTypes } from "./ListModules";
 
-const CreateAppMaster = ({ history }) => {
-  const dataForEdit: appMasterTypes = history?.location?.state;
+const CreateModule = ({ history }) => {
+  const dataForEdit: moduleMasterTypes = history?.location?.state;
   const [loader, setloader] = useState({
     isLoading: false,
     error: false,
     msg: "",
   });
-  const [appMaster, setAppMaster] = useState({
-    app_name: "",
-    app_id: "",
-    app_version: "",
-    is_stop_prev_version: false,
+
+  const [moduleMaster, setModuleMaster] = useState({
+    module_name: "",
+    module_description: "",
+    route_key: "",
   });
 
   const onChange = (target) => {
     const { name, value } = target;
-    if (name === "is_stop_prev_version") {
-      setAppMaster({ ...appMaster, [name]: target?.checked });
-    } else {
-      setAppMaster({ ...appMaster, [name]: value });
-    }
+
+    setModuleMaster({
+      ...moduleMaster,
+      [name]: value,
+    });
   };
 
   const onSubmit = async () => {
     setloader({ ...loader, isLoading: true });
+
     try {
       let res;
       let url;
 
       if (dataForEdit?.id) {
-        url = `${config.baseUrl}/superAdmin/appMaster`;
-        res = await putAuthorized(url, { ...appMaster, id: dataForEdit?.id });
+        url = `${config.baseUrl}/superAdmin/updateModuleMaster `;
+        res = await putAuthorized(url, {
+          ...moduleMaster,
+          id: dataForEdit?.id,
+        });
       } else {
-        url = `${config.baseUrl}/superAdmin/appMaster`;
-        res = await postAuthorized(url, appMaster);
+        url = `${config.baseUrl}/superAdmin/addModuleMaster`;
+        res = await postAuthorized(url, moduleMaster);
       }
-
       setloader({
         ...loader,
         isLoading: false,
@@ -56,17 +59,26 @@ const CreateAppMaster = ({ history }) => {
       setTimeout(() => {
         setloader({ ...loader, msg: "" });
       }, 5000);
-    } catch (error) {}
+    } catch (error) {
+      setloader({
+        ...loader,
+        isLoading: false,
+        error: true,
+        msg: "Something Went Wrong",
+      });
+      setTimeout(() => {
+        setloader({ ...loader, msg: "" });
+      }, 5000);
+    }
   };
 
   useEffect(() => {
     if (dataForEdit) {
-      setAppMaster({
-        ...appMaster,
-        app_name: dataForEdit?.appName,
-        app_version: dataForEdit?.appVersion,
-        app_id: dataForEdit?.appId,
-        is_stop_prev_version: dataForEdit?.isStopPrevVersion,
+      setModuleMaster({
+        ...moduleMaster,
+        module_description: dataForEdit?.moduleDescription,
+        module_name: dataForEdit?.moduleName,
+        route_key: dataForEdit?.routeKey,
       });
     }
   }, [dataForEdit]);
@@ -74,51 +86,40 @@ const CreateAppMaster = ({ history }) => {
   return (
     <>
       <FlexDiv justifyContentCenter>
-        <H2Heading>App Master</H2Heading>
+        <H2Heading>Create App Role Master</H2Heading>
       </FlexDiv>
 
       <FlexDiv justifyContentCenter>
         <FlexDiv column alignItemsCenter width="80%">
           <Container>
             <FormInput
-              name="app_name"
               type="text"
-              label="App Name"
-              value={appMaster.app_name}
-              onChange={(target) => onChange(target)}
+              name="module_name"
               fieldErrors={{}}
+              value={moduleMaster?.module_name}
+              onChange={(target) => onChange(target)}
+              label="Module Name"
             />
           </Container>
 
           <Container>
             <FormInput
-              name="app_version"
               type="text"
-              label="App Version"
-              value={appMaster.app_version}
-              onChange={(target) => onChange(target)}
+              name="module_description"
               fieldErrors={{}}
+              value={moduleMaster?.module_description}
+              onChange={(target) => onChange(target)}
+              label="Module Description"
             />
           </Container>
           <Container>
             <FormInput
-              name="app_id"
               type="text"
-              label="App ID"
-              value={appMaster.app_id}
-              onChange={(target) => onChange(target)}
+              name="route_key"
               fieldErrors={{}}
-            />
-          </Container>
-          <Container>
-            <FormControlLabel
-              value="top"
-              name="is_stop_prev_version"
-              control={<Switch />}
-              checked={appMaster?.is_stop_prev_version}
-              onChange={({ target }: any) => onChange(target)}
-              label="Stop Last Version?"
-              labelPlacement="start"
+              value={moduleMaster?.route_key}
+              onChange={(target) => onChange(target)}
+              label="Module Route Key"
             />
           </Container>
         </FlexDiv>
@@ -144,4 +145,4 @@ const CreateAppMaster = ({ history }) => {
   );
 };
 
-export default CreateAppMaster;
+export default CreateModule;

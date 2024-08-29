@@ -147,6 +147,7 @@ interface IFormSelect extends IForm {
   getOptionValue?: any;
   styles?: any;
   selectProps?: any;
+  optionLabel?: string;
 }
 
 export function FormInput({
@@ -403,6 +404,7 @@ export function MyFormSelect({
   placeholder,
   fieldErrors,
   selectProps,
+  optionLabel,
   ...rest
 }: IFormSelect) {
   return (
@@ -433,7 +435,9 @@ export function MyFormSelect({
       >
         {options?.map((i, index) => (
           <MenuItem key={index} value={i}>
-            {i?.tierType
+            {optionLabel
+              ? i[optionLabel]
+              : i?.tierType
               ? `${i?.name},(${i?.tierType})`
               : i?.vehicleType
               ? `${i?.name},(${i?.vehicleType})`
@@ -442,8 +446,10 @@ export function MyFormSelect({
               : i?.name ||
                 i.supplierName ||
                 i.label ||
-                i?.appName ||
                 i?.roleName ||
+                i?.pageName ||
+                i?.moduleName ||
+                i?.appName ||
                 i.engineCapacity ||
                 i.year ||
                 i.value ||

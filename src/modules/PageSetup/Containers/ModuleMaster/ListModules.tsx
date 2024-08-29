@@ -18,47 +18,53 @@ import {
 import { RoutesPath } from "../../../../config/routes.config";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import ModalConfirmation from "../../../ProductManufacturer/OrderManagement/component/ModalConfirmation";
-const headers = ["Id", "App Name", "App Id", "Role Name", "Actions"];
-export type appRoleMasterSetupTypes = {
-  appName: any;
-  roleName: string;
-  isActive: string;
+const headers = [
+  "Id",
+  "Module Name",
+  "Module Description",
+  "Route Key",
+  "Actions",
+];
+export type moduleMasterTypes = {
+  moduleName: any;
+  moduleDescription: string;
+  moduleId: number;
+  routeKey: string;
   id: number;
-  appId: any;
 };
-const AppRoleMasterSetupList = ({ history }) => {
-  const [appRoleMasterList, setAppRoleMasterList] = useState<
-    appRoleMasterSetupTypes[]
-  >([]);
+const ListModules = ({ history }) => {
+  const [moduleMasterList, setModuleMasterList] = useState<moduleMasterTypes[]>(
+    []
+  );
   const [removeModal, setRemoveModal] = useState<any>({
     show: false,
     type: "confirm",
     id: "",
   });
-  const getAppRoleMaster = async () => {
-    let url = `${config.baseUrl}/superAdmin/appRoleMasters`;
+  const getModuleMaster = async () => {
+    let url = `${config.baseUrl}/superAdmin/moduleMasters`;
 
     try {
       const { data } = await getAuthorized(url);
-      setAppRoleMasterList(data?.data);
+      setModuleMasterList(data?.data);
     } catch (error) {}
   };
   const deleteItem = async (id: number) => {
-    let url = `${config.baseUrl}/superAdmin/deactivateAppRoleMaster`;
+    let url = `${config.baseUrl}/superAdmin/deactivateModuleMaster`;
 
     try {
       const { data } = await putAuthorized(url, { id });
-      getAppRoleMaster();
+      getModuleMaster();
     } catch (error) {}
   };
 
   useEffect(() => {
-    getAppRoleMaster();
+    getModuleMaster();
   }, []);
   return (
     <>
       <FlexDiv justifyContentCenter>
-        <H2Heading>App Role Master List</H2Heading>
+        <H2Heading>Module Master List</H2Heading>
       </FlexDiv>
 
       <FlexDiv
@@ -70,30 +76,27 @@ const AppRoleMasterSetupList = ({ history }) => {
           <Table sx={{ minWidth: "fit-content" }} aria-label="vehicle models">
             <Header titles={headers} color="#000" />
             <TableBody>
-              {appRoleMasterList.length
-                ? appRoleMasterList.map((row, index: number) => {
+              {moduleMasterList.length
+                ? moduleMasterList.map((row, index: number) => {
                     return (
                       <StyledTableRow key={row?.id}>
                         <StyledTableCell align="center">
                           {row?.id}
                         </StyledTableCell>
                         <StyledTableCell align="center">
-                          {row?.appName}
+                          {row?.moduleName}
                         </StyledTableCell>
                         <StyledTableCell align="center">
-                          {row?.appId}
+                          {row?.moduleDescription}
                         </StyledTableCell>
                         <StyledTableCell align="center">
-                          {row?.roleName}
+                          {row?.routeKey}
                         </StyledTableCell>
                         <StyledTableCell align="center">
                           <FlexDiv justifyContentSpaceEvenly>
                             <IconButton
                               onClick={() =>
-                                history?.push(
-                                  RoutesPath.AppRoleMasterSetup,
-                                  row
-                                )
+                                history?.push(RoutesPath.CreateModule, row)
                               }
                             >
                               <FaEdit />
@@ -126,10 +129,10 @@ const AppRoleMasterSetupList = ({ history }) => {
         onConfirm={() => deleteItem(removeModal.id)}
         onCancel={() => setRemoveModal({ ...removeModal, show: false })}
         header="Remove Item"
-        body="Are you sure to delete This App Master?"
+        body="Are you sure to delete This Module Master?"
       />
     </>
   );
 };
 
-export default AppRoleMasterSetupList;
+export default ListModules;

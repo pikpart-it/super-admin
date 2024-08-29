@@ -15,6 +15,14 @@ const pages = [
   "SuperAdminAppRoleMasterSetupList",
   "SuperAdminAppMasterList",
   "SuperAdminCreateAppMaster",
+  "SuperAdminAppModuleMasterSetupList",
+  "SuperAdminAppModuleMasterSetup",
+  "SuperAdminModulePageMasterSetup",
+  "SuperAdminModulePageMasterSetupList",
+  "SuperAdminMasterConfiguration",
+  "SuperAdminMasterConfigurationList",
+  "SuperAdminModuleMasterCreate",
+  "SuperAdminModuleMasterList",
 ];
 
 function AppLayout() {

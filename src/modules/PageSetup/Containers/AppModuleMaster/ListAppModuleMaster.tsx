@@ -1,13 +1,4 @@
-import {
-  IconButton,
-  Paper,
-  Table,
-  TableBody,
-  TableContainer,
-} from "@mui/material";
 import { useEffect, useState } from "react";
-import Header from "../../../../components/ListsHeader";
-import { H2Heading } from "../../../../components/styled";
 import { config } from "../../../../config/config";
 import { getAuthorized, putAuthorized } from "../../../../services";
 import {
@@ -15,50 +6,72 @@ import {
   StyledTableCell,
   StyledTableRow,
 } from "../../../../style/styled";
+import { H2Heading } from "../../../../components/styled";
+import {
+  IconButton,
+  Paper,
+  Table,
+  TableBody,
+  TableContainer,
+} from "@mui/material";
+import Header from "../../../../components/ListsHeader";
 import { RoutesPath } from "../../../../config/routes.config";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import ModalConfirmation from "../../../ProductManufacturer/OrderManagement/component/ModalConfirmation";
-const headers = ["Id", "App Name", "App Id", "Role Name", "Actions"];
-export type appRoleMasterSetupTypes = {
-  appName: any;
-  roleName: string;
-  isActive: string;
-  id: number;
+
+const headers = [
+  "Id",
+  "App Name",
+  "App Id",
+  "Module Name",
+  "Route Key",
+  "Is Active",
+  "Actions",
+];
+export type appModuleMasterTypes = {
   appId: any;
+  appName: string;
+  appVersion: string;
+  id: number;
+  isActive: boolean;
+  moduleName: string;
+  moduleId: number;
+  routeKey: string;
 };
-const AppRoleMasterSetupList = ({ history }) => {
-  const [appRoleMasterList, setAppRoleMasterList] = useState<
-    appRoleMasterSetupTypes[]
+const ListAppModuleMaster = ({ history }) => {
+  const [appModuleMasterList, setAppModuleMasterList] = useState<
+    appModuleMasterTypes[]
   >([]);
   const [removeModal, setRemoveModal] = useState<any>({
     show: false,
     type: "confirm",
     id: "",
   });
-  const getAppRoleMaster = async () => {
-    let url = `${config.baseUrl}/superAdmin/appRoleMasters`;
+  const getAppMasterList = async () => {
+    let url = `${config.baseUrl}/superAdmin/appModuleMasters`;
 
     try {
       const { data } = await getAuthorized(url);
-      setAppRoleMasterList(data?.data);
+      setAppModuleMasterList(data?.data);
     } catch (error) {}
   };
+
   const deleteItem = async (id: number) => {
-    let url = `${config.baseUrl}/superAdmin/deactivateAppRoleMaster`;
+    let url = `${config.baseUrl}/superAdmin/deactivateAppModuleMaster`;
 
     try {
       const { data } = await putAuthorized(url, { id });
-      getAppRoleMaster();
+      getAppMasterList();
     } catch (error) {}
   };
 
   useEffect(() => {
-    getAppRoleMaster();
+    getAppMasterList();
   }, []);
   return (
     <>
       <FlexDiv justifyContentCenter>
-        <H2Heading>App Role Master List</H2Heading>
+        <H2Heading>App Module Master List</H2Heading>
       </FlexDiv>
 
       <FlexDiv
@@ -70,8 +83,8 @@ const AppRoleMasterSetupList = ({ history }) => {
           <Table sx={{ minWidth: "fit-content" }} aria-label="vehicle models">
             <Header titles={headers} color="#000" />
             <TableBody>
-              {appRoleMasterList.length
-                ? appRoleMasterList.map((row, index: number) => {
+              {appModuleMasterList.length
+                ? appModuleMasterList.map((row) => {
                     return (
                       <StyledTableRow key={row?.id}>
                         <StyledTableCell align="center">
@@ -84,20 +97,28 @@ const AppRoleMasterSetupList = ({ history }) => {
                           {row?.appId}
                         </StyledTableCell>
                         <StyledTableCell align="center">
-                          {row?.roleName}
+                          {row?.moduleName}
                         </StyledTableCell>
+                        <StyledTableCell align="center">
+                          {row?.routeKey}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          {row?.isActive ? "Yes" : "No"}
+                        </StyledTableCell>
+
                         <StyledTableCell align="center">
                           <FlexDiv justifyContentSpaceEvenly>
                             <IconButton
                               onClick={() =>
                                 history?.push(
-                                  RoutesPath.AppRoleMasterSetup,
+                                  RoutesPath.CreateAppModuleMaster,
                                   row
                                 )
                               }
                             >
                               <FaEdit />
                             </IconButton>
+
                             <IconButton
                               onClick={() =>
                                 setRemoveModal({
@@ -126,10 +147,10 @@ const AppRoleMasterSetupList = ({ history }) => {
         onConfirm={() => deleteItem(removeModal.id)}
         onCancel={() => setRemoveModal({ ...removeModal, show: false })}
         header="Remove Item"
-        body="Are you sure to delete This App Master?"
+        body="Are you sure to delete This App Module Master?"
       />
     </>
   );
 };
 
-export default AppRoleMasterSetupList;
+export default ListAppModuleMaster;
