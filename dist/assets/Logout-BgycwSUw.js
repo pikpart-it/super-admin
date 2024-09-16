@@ -1,0 +1,1 @@
+import{R as t,j as e,F as o}from"./index-BRAkPIdf.js";function s(){return t.useEffect(()=>{localStorage.clear(),window.location.href="/"},[]),e.jsx(o,{alignItemsCenter:!0,justifyContentCenter:!0,width:"100%",style:{height:"100vh"},children:e.jsx("h3",{children:"You have been logged out successfully."})})}export{s as default};
