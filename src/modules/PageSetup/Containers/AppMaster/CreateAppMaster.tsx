@@ -9,6 +9,12 @@ import { postAuthorized, putAuthorized } from "../../../../services";
 import { FlexDiv } from "../../../../style/styled";
 import { appMasterTypes } from "./ListAppMaster";
 import { Container } from "../RoleMaster/CreateRoleMaster";
+import { Autocomplete, FormControl, FormLabel, Input } from "@mui/joy";
+
+export const appTypes = [
+  { name: "Mobile", value: "mobile" },
+  { name: "Web", value: "web" },
+];
 
 const CreateAppMaster = ({ history }) => {
   const dataForEdit: appMasterTypes = history?.location?.state;
@@ -18,6 +24,7 @@ const CreateAppMaster = ({ history }) => {
     msg: "",
   });
   const [appMaster, setAppMaster] = useState({
+    app_type: { name: "", value: "" },
     app_name: "",
     app_id: "",
     app_version: "",
@@ -41,10 +48,17 @@ const CreateAppMaster = ({ history }) => {
 
       if (dataForEdit?.id) {
         url = `${config.baseUrl}/superAdmin/appMaster`;
-        res = await putAuthorized(url, { ...appMaster, id: dataForEdit?.id });
+        res = await putAuthorized(url, {
+          ...appMaster,
+          id: dataForEdit?.id,
+          app_type: appMaster?.app_type?.value,
+        });
       } else {
         url = `${config.baseUrl}/superAdmin/appMaster`;
-        res = await postAuthorized(url, appMaster);
+        res = await postAuthorized(url, {
+          ...appMaster,
+          app_type: appMaster?.app_type?.value,
+        });
       }
 
       setloader({
@@ -56,7 +70,25 @@ const CreateAppMaster = ({ history }) => {
       setTimeout(() => {
         setloader({ ...loader, msg: "" });
       }, 5000);
-    } catch (error) {}
+      setAppMaster({
+        ...appMaster,
+        app_name: "",
+        app_type: { name: "", value: "" },
+        app_id: "",
+        app_version: "",
+        is_stop_prev_version: false,
+      });
+    } catch (error) {
+      setloader({
+        ...loader,
+        isLoading: false,
+        error: true,
+        msg: "Something went wrong",
+      });
+      setTimeout(() => {
+        setloader({ ...loader, msg: "" });
+      }, 5000);
+    }
   };
 
   useEffect(() => {
@@ -67,6 +99,7 @@ const CreateAppMaster = ({ history }) => {
         app_version: dataForEdit?.appVersion,
         app_id: dataForEdit?.appId,
         is_stop_prev_version: dataForEdit?.isStopPrevVersion,
+        app_type: appTypes?.find((i) => i?.value === dataForEdit?.appType)!,
       });
     }
   }, [dataForEdit]);
@@ -80,35 +113,52 @@ const CreateAppMaster = ({ history }) => {
       <FlexDiv justifyContentCenter>
         <FlexDiv column alignItemsCenter width="80%">
           <Container>
-            <FormInput
-              name="app_name"
-              type="text"
-              label="App Name"
-              value={appMaster.app_name}
-              onChange={(target) => onChange(target)}
-              fieldErrors={{}}
-            />
+            <FormControl>
+              <FormLabel>App Type*</FormLabel>
+              <Autocomplete
+                value={appMaster?.app_type}
+                onChange={(e, value) => onChange({ name: "app_type", value })}
+                options={appTypes}
+                getOptionLabel={(option: any) => option?.name}
+              />
+            </FormControl>
+          </Container>
+          <Container>
+            <FormControl>
+              <FormLabel>App Name*</FormLabel>
+
+              <Input
+                name="app_name"
+                type="text"
+                value={appMaster.app_name}
+                onChange={({ target }) => onChange(target)}
+              />
+            </FormControl>
           </Container>
 
           <Container>
-            <FormInput
-              name="app_version"
-              type="text"
-              label="App Version"
-              value={appMaster.app_version}
-              onChange={(target) => onChange(target)}
-              fieldErrors={{}}
-            />
+            <FormControl>
+              <FormLabel>App Version*</FormLabel>
+
+              <Input
+                name="app_version"
+                type="text"
+                value={appMaster.app_version}
+                onChange={({ target }) => onChange(target)}
+              />
+            </FormControl>
           </Container>
           <Container>
-            <FormInput
-              name="app_id"
-              type="text"
-              label="App ID"
-              value={appMaster.app_id}
-              onChange={(target) => onChange(target)}
-              fieldErrors={{}}
-            />
+            <FormControl>
+              <FormLabel>App ID*</FormLabel>
+
+              <Input
+                name="app_id"
+                type="text"
+                value={appMaster.app_id}
+                onChange={({ target }) => onChange(target)}
+              />
+            </FormControl>
           </Container>
           <Container>
             <FormControlLabel

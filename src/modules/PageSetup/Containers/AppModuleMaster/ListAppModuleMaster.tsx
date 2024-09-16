@@ -31,6 +31,7 @@ const headers = [
 export type appModuleMasterTypes = {
   appId: any;
   appName: string;
+  appType: string;
   appVersion: string;
   id: number;
   isActive: boolean;

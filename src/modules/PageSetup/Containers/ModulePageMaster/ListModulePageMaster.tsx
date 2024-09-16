@@ -39,6 +39,10 @@ export type modulePageMasterTypes = {
   routeKey: string;
   routePath: string;
   checked: boolean;
+  create: boolean;
+  update: boolean;
+  delete: boolean;
+  get: boolean;
 };
 const ListModulePageMaster = ({ history }) => {
   const [modulePageMasterList, setModulePageMasterList] = useState<

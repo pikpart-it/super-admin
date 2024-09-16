@@ -21,6 +21,7 @@ import ModalConfirmation from "../../../ProductManufacturer/OrderManagement/comp
 const headers = ["Id", "App Name", "App Id", "Role Name", "Actions"];
 export type appRoleMasterSetupTypes = {
   appName: any;
+  appType: string;
   roleName: string;
   isActive: string;
   id: number;

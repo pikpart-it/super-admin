@@ -95,7 +95,6 @@ function AppLayout() {
   );
 
   useEffect(() => {
-    console.log("runninnnnngg");
     pages?.map((i) => {
       setPageAccess(i, userRoles.SuperAdmin);
     });

@@ -73,7 +73,6 @@ function OrdersListingComponent({
   const cancel = (orderId) => {
     setCancelOrderModal({ ...cancelOrderModal, show: true, id: orderId });
   };
-  console.log(ordersList);
   return (
     <div>
       {loading ? (

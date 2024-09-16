@@ -9,6 +9,7 @@ import { postAuthorized, putAuthorized } from "../../../../services";
 import { Loader } from "../../../../components/Loader";
 import MsgCard from "../../../../components/MsgCard";
 import { roleTypes } from "./RoleMasterList";
+import { FormControl, FormLabel, Input } from "@mui/joy";
 export const Container = styled.div`
   width: 25%;
   margin: 10px 0px;
@@ -56,7 +57,18 @@ const CreateRoleMaster = ({ history }) => {
       setTimeout(() => {
         setloader({ ...loader, msg: "" });
       }, 5000);
-    } catch (error) {}
+      setRoleData({ ...roleData, id: 0, role_description: "", role_name: "" });
+    } catch (error) {
+      setloader({
+        ...loader,
+        isLoading: false,
+        error: true,
+        msg: "Something Went Wrong",
+      });
+      setTimeout(() => {
+        setloader({ ...loader, msg: "" });
+      }, 5000);
+    }
   };
 
   useEffect(() => {
@@ -79,23 +91,25 @@ const CreateRoleMaster = ({ history }) => {
       <FlexDiv justifyContentCenter>
         <FlexDiv column alignItemsCenter width="80%">
           <Container>
-            <FormInput
+            <FormControl>
+              <FormLabel>Role Name*</FormLabel>
+            </FormControl>
+            <Input
               name="role_name"
               type="text"
-              label="Role Name"
               value={roleData.role_name}
-              onChange={(target) => onChange(target)}
-              fieldErrors={{}}
+              onChange={({ target }) => onChange(target)}
             />
           </Container>
           <Container>
-            <FormInput
+            <FormControl>
+              <FormLabel>Role Description*</FormLabel>
+            </FormControl>
+            <Input
               name="role_description"
               type="text"
-              label="Role Description"
               value={roleData.role_description}
-              onChange={(target) => onChange(target)}
-              fieldErrors={{}}
+              onChange={({ target }) => onChange(target)}
             />
           </Container>
         </FlexDiv>

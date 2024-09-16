@@ -15,6 +15,8 @@ import { Container } from "../RoleMaster/CreateRoleMaster";
 import { appMasterTypes } from "../AppMaster/ListAppMaster";
 import { appModuleMasterTypes } from "./ListAppModuleMaster";
 import { moduleMasterTypes } from "../ModuleMaster/ListModules";
+import { Autocomplete, FormControl, FormLabel } from "@mui/joy";
+import { appTypes } from "../AppMaster/CreateAppMaster";
 
 const CreateAppModuleMaster = ({ history }) => {
   const dataForEdit: appModuleMasterTypes = history?.location?.state;
@@ -29,6 +31,7 @@ const CreateAppModuleMaster = ({ history }) => {
   });
   const [appModuleMaster, setAppModuleMaster] = useState({
     app_name: { appName: "", appId: "", id: 0 },
+    app_type: { name: "", value: "" },
     module_name: { moduleName: "", id: 0, routeKey: "" },
   });
 
@@ -70,6 +73,7 @@ const CreateAppModuleMaster = ({ history }) => {
       module_name: module_name?.moduleName,
       module_id: module_name?.id,
       route_key: module_name?.routeKey,
+      app_type: undefined,
     };
     try {
       let res;
@@ -92,7 +96,23 @@ const CreateAppModuleMaster = ({ history }) => {
       setTimeout(() => {
         setloader({ ...loader, msg: "" });
       }, 5000);
-    } catch (error) {}
+      setAppModuleMaster({
+        ...appModuleMaster,
+        app_name: { appName: "", appId: "", id: 0 },
+        app_type: { name: "", value: "" },
+        module_name: { id: 0, moduleName: "", routeKey: "" },
+      });
+    } catch (error) {
+      setloader({
+        ...loader,
+        isLoading: false,
+        error: true,
+        msg: "Something Went Wrong",
+      });
+      setTimeout(() => {
+        setloader({ ...loader, msg: "" });
+      }, 5000);
+    }
   };
 
   useEffect(() => {
@@ -103,6 +123,7 @@ const CreateAppModuleMaster = ({ history }) => {
           (i) => i?.id === dataForEdit?.moduleId
         )!,
         app_name: appMasterList?.find((i) => i?.id === dataForEdit?.appId)!,
+        app_type: appTypes?.find((i) => i?.value === dataForEdit?.appType)!,
       });
     }
   }, [dataForEdit, appMasterList, moduleMasterList]);
@@ -120,32 +141,42 @@ const CreateAppModuleMaster = ({ history }) => {
       <FlexDiv justifyContentCenter>
         <FlexDiv column alignItemsCenter width="80%">
           <Container>
-            <MyFormSelect
-              name="app_name"
-              list={[]}
-              fieldErrors={{}}
-              selectProps={{
-                renderValue: (val) => val?.appName,
-              }}
-              value={appModuleMaster?.app_name}
-              onChange={(target) => onChange(target)}
-              label="App Name"
-              options={appMasterList}
-            />
+            <FormControl>
+              <FormLabel>App Type*</FormLabel>
+              <Autocomplete
+                value={appModuleMaster?.app_type}
+                onChange={(e, value) => onChange({ name: "app_type", value })}
+                options={appTypes}
+                getOptionLabel={(option: any) => option?.name}
+              />
+            </FormControl>
           </Container>
           <Container>
-            <MyFormSelect
-              name="module_name"
-              list={[]}
-              fieldErrors={{}}
-              selectProps={{
-                renderValue: (val) => val?.moduleName,
-              }}
-              value={appModuleMaster?.module_name}
-              onChange={(target) => onChange(target)}
-              label="Module Name"
-              options={moduleMasterList}
-            />
+            <FormControl>
+              <FormLabel>App Name*</FormLabel>
+              <Autocomplete
+                value={appModuleMaster?.app_name}
+                onChange={(e, value) => onChange({ name: "app_name", value })}
+                options={appMasterList?.filter(
+                  (i) => i?.appType === appModuleMaster?.app_type?.value
+                )}
+                getOptionLabel={(option: any) => option?.appName}
+              />
+            </FormControl>
+          </Container>
+
+          <Container>
+            <FormControl>
+              <FormLabel>Module Name*</FormLabel>
+              <Autocomplete
+                value={appModuleMaster?.module_name}
+                onChange={(e, value) =>
+                  onChange({ name: "module_name", value })
+                }
+                options={moduleMasterList}
+                getOptionLabel={(option: any) => option?.moduleName}
+              />
+            </FormControl>
           </Container>
         </FlexDiv>
       </FlexDiv>

@@ -9,6 +9,7 @@ import { postAuthorized, putAuthorized } from "../../../../services";
 import { FlexDiv } from "../../../../style/styled";
 import { Container } from "../RoleMaster/CreateRoleMaster";
 import { moduleMasterTypes } from "./ListModules";
+import { FormControl, FormLabel, Input } from "@mui/joy";
 
 const CreateModule = ({ history }) => {
   const dataForEdit: moduleMasterTypes = history?.location?.state;
@@ -59,6 +60,12 @@ const CreateModule = ({ history }) => {
       setTimeout(() => {
         setloader({ ...loader, msg: "" });
       }, 5000);
+      setModuleMaster({
+        ...moduleMaster,
+        module_description: "",
+        module_name: "",
+        route_key: "",
+      });
     } catch (error) {
       setloader({
         ...loader,
@@ -86,41 +93,47 @@ const CreateModule = ({ history }) => {
   return (
     <>
       <FlexDiv justifyContentCenter>
-        <H2Heading>Create App Role Master</H2Heading>
+        <H2Heading>Create Master Module</H2Heading>
       </FlexDiv>
 
       <FlexDiv justifyContentCenter>
         <FlexDiv column alignItemsCenter width="80%">
           <Container>
-            <FormInput
-              type="text"
-              name="module_name"
-              fieldErrors={{}}
-              value={moduleMaster?.module_name}
-              onChange={(target) => onChange(target)}
-              label="Module Name"
-            />
+            <FormControl>
+              <FormLabel>Module Name*</FormLabel>
+              <Input
+                type="text"
+                name="module_name"
+                onChange={({ target }) => onChange(target)}
+                placeholder="Module Name"
+                value={moduleMaster?.module_name}
+              />
+            </FormControl>
           </Container>
 
           <Container>
-            <FormInput
-              type="text"
-              name="module_description"
-              fieldErrors={{}}
-              value={moduleMaster?.module_description}
-              onChange={(target) => onChange(target)}
-              label="Module Description"
-            />
+            <FormControl>
+              <FormLabel>Module Description*</FormLabel>
+              <Input
+                type="text"
+                name="module_description"
+                value={moduleMaster?.module_description}
+                onChange={({ target }) => onChange(target)}
+                placeholder="Module Description"
+              />
+            </FormControl>
           </Container>
           <Container>
-            <FormInput
-              type="text"
-              name="route_key"
-              fieldErrors={{}}
-              value={moduleMaster?.route_key}
-              onChange={(target) => onChange(target)}
-              label="Module Route Key"
-            />
+            <FormControl>
+              <FormLabel>Module Description*</FormLabel>
+              <Input
+                type="text"
+                name="route_key"
+                value={moduleMaster?.route_key}
+                onChange={({ target }) => onChange(target)}
+                placeholder="Module Route Key"
+              />
+            </FormControl>
           </Container>
         </FlexDiv>
       </FlexDiv>

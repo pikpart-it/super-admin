@@ -15,6 +15,8 @@ import { appRoleMasterSetupTypes } from "./AppRoleMasterSetupList";
 import { Loader } from "../../../../components/Loader";
 import MsgCard from "../../../../components/MsgCard";
 import { appMasterTypes } from "../AppMaster/ListAppMaster";
+import { Autocomplete, FormControl, FormLabel } from "@mui/joy";
+import { appTypes } from "../AppMaster/CreateAppMaster";
 
 const AppRoleMasterSetup = ({ history }) => {
   const dataForEdit: appRoleMasterSetupTypes = history?.location?.state;
@@ -27,6 +29,7 @@ const AppRoleMasterSetup = ({ history }) => {
   const [appMasterList, setAppMasterList] = useState<appMasterTypes[]>([]);
   const [appRoleMaster, setAppRoleMaster] = useState({
     app_name: { appName: "", id: 0, appId: "" },
+    app_type: { name: "", value: "" },
     app_id: "",
     role_name: { roleName: "", id: 0 },
     role_id: "",
@@ -68,6 +71,7 @@ const AppRoleMasterSetup = ({ history }) => {
       role_id: appRoleMaster?.role_name?.id,
       app_name: appRoleMaster?.app_name?.appId,
       app_id: appRoleMaster?.app_name?.id,
+      app_type: undefined,
     };
     try {
       let res;
@@ -89,6 +93,12 @@ const AppRoleMasterSetup = ({ history }) => {
       setTimeout(() => {
         setloader({ ...loader, msg: "" });
       }, 5000);
+      setAppRoleMaster({
+        ...appRoleMaster,
+        app_name: { appId: "", appName: "", id: 0 },
+        app_type: { name: "", value: "" },
+        role_name: { id: 0, roleName: "" },
+      });
     } catch (error) {
       setloader({
         ...loader,
@@ -110,6 +120,7 @@ const AppRoleMasterSetup = ({ history }) => {
         role_name: rolesList?.find(
           (i) => i?.roleName === dataForEdit?.roleName
         )!,
+        app_type: appTypes?.find((i) => i?.value === dataForEdit?.appType)!,
       });
     }
   }, [dataForEdit, rolesList, appMasterList]);
@@ -128,33 +139,40 @@ const AppRoleMasterSetup = ({ history }) => {
       <FlexDiv justifyContentCenter>
         <FlexDiv column alignItemsCenter width="80%">
           <Container>
-            <MyFormSelect
-              name="app_name"
-              list={[]}
-              fieldErrors={{}}
-              value={appRoleMaster?.app_name}
-              selectProps={{
-                renderValue: (val) => val?.appName,
-              }}
-              onChange={(target) => onChange(target)}
-              label="App Name"
-              options={appMasterList}
-            />
+            <FormControl>
+              <FormLabel>App Type*</FormLabel>
+              <Autocomplete
+                value={appRoleMaster?.app_type}
+                onChange={(e, value) => onChange({ name: "app_type", value })}
+                options={appTypes}
+                getOptionLabel={(option: any) => option?.name}
+              />
+            </FormControl>
+          </Container>
+          <Container>
+            <FormControl>
+              <FormLabel>App Name*</FormLabel>
+              <Autocomplete
+                value={appRoleMaster?.app_name}
+                onChange={(e, value) => onChange({ name: "app_name", value })}
+                options={appMasterList?.filter(
+                  (i) => i?.appType === appRoleMaster?.app_type?.value
+                )}
+                getOptionLabel={(option: any) => option?.appName}
+              />
+            </FormControl>
           </Container>
 
           <Container>
-            <MyFormSelect
-              name="role_name"
-              list={[]}
-              fieldErrors={{}}
-              value={appRoleMaster?.role_name}
-              selectProps={{
-                renderValue: (val) => val?.roleName,
-              }}
-              onChange={(target) => onChange(target)}
-              label="Role Name"
-              options={rolesList}
-            />
+            <FormControl>
+              <FormLabel>Role Name*</FormLabel>
+              <Autocomplete
+                value={appRoleMaster?.role_name}
+                onChange={(e, value) => onChange({ name: "role_name", value })}
+                options={rolesList}
+                getOptionLabel={(option: any) => option?.roleName}
+              />
+            </FormControl>
           </Container>
         </FlexDiv>
       </FlexDiv>

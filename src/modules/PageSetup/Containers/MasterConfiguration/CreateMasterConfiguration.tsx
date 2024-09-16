@@ -1,24 +1,20 @@
-import { Button, FormControlLabel, Switch } from "@mui/material";
+import { Autocomplete, FormControl, FormLabel } from "@mui/joy";
+import { Button } from "@mui/material";
 import { ChangeEvent, useEffect, useState } from "react";
-import { FormInput, MyFormSelect } from "../../../../components/Forms/Form";
+import { FaArrowRight } from "react-icons/fa";
 import { Loader } from "../../../../components/Loader";
 import MsgCard from "../../../../components/MsgCard";
 import { H2Heading } from "../../../../components/styled";
 import { config } from "../../../../config/config";
-import {
-  getAuthorized,
-  postAuthorized,
-  putAuthorized,
-} from "../../../../services";
+import { getAuthorized, postAuthorized } from "../../../../services";
 import { FlexDiv } from "../../../../style/styled";
-import { Container } from "../RoleMaster/CreateRoleMaster";
 import { appMasterTypes } from "../AppMaster/ListAppMaster";
 import { appModuleMasterTypes } from "../AppModuleMaster/ListAppModuleMaster";
-import { modulePageMasterTypes } from "../ModulePageMaster/ListModulePageMaster";
 import { appRoleMasterSetupTypes } from "../AppRoleMaster/AppRoleMasterSetupList";
-import { roleTypes } from "../RoleMaster/RoleMasterList";
-import { FaArrowRight } from "react-icons/fa";
-import ListMasterConfiguration from "./ListMasterConfiguration";
+import { modulePageMasterTypes } from "../ModulePageMaster/ListModulePageMaster";
+import { Container } from "../RoleMaster/CreateRoleMaster";
+import ListMasterConfigurationTable from "./ListMasterConfigurationTable";
+import { appTypes } from "../AppMaster/CreateAppMaster";
 
 const CreateMasterConfiguration = ({ history }) => {
   const [moduleMasterList, setModuleMasterList] = useState<
@@ -43,6 +39,7 @@ const CreateMasterConfiguration = ({ history }) => {
     route_key: "",
     module_name: { moduleName: "", moduleId: 0, routeKey: "" },
     app_name: { appName: "", id: 0, appId: "" },
+    app_type: { name: "", value: "" },
     role_name: { roleName: "", id: 0 },
     app_id: "",
     role_id: "",
@@ -51,6 +48,7 @@ const CreateMasterConfiguration = ({ history }) => {
     route_path: "",
     is_active: true,
   });
+
   const getModuleMasterList = async () => {
     let url = `${config.baseUrl}/superAdmin/appModuleMasters`;
 
@@ -82,7 +80,14 @@ const CreateMasterConfiguration = ({ history }) => {
 
     try {
       const { data } = await getAuthorized(url);
-      const modified = data?.data?.map((i) => ({ ...i, checked: false }));
+      const modified = data?.data?.map((i) => ({
+        ...i,
+        checked: false,
+        create: false,
+        update: false,
+        delete: false,
+        get: false,
+      }));
       const filtered = modified?.filter(
         (i) => i?.moduleId === masterConfiguration.module_name.moduleId
       );
@@ -100,11 +105,12 @@ const CreateMasterConfiguration = ({ history }) => {
         page_name: k?.pageName,
         page_description: k?.pageDescription,
         route_key: k?.routeKey,
+        route_path: k?.routePath,
         module_name: masterConfiguration?.module_name?.moduleName,
         module_id: masterConfiguration?.module_name?.moduleId,
         app_module_route_key: masterConfiguration?.module_name?.routeKey,
-        app_name: masterConfiguration?.app_name.appName,
-        app_id: masterConfiguration?.app_name.appId,
+        app_name: masterConfiguration?.app_name.appId,
+        app_id: masterConfiguration?.app_name.id,
         role_name: masterConfiguration?.role_name.roleName,
         role_id: masterConfiguration?.role_name.id,
         is_active: masterConfiguration?.is_active,
@@ -118,6 +124,7 @@ const CreateMasterConfiguration = ({ history }) => {
 
     const payload = {
       priviledge_type_configs: perparePayload(),
+      config_types: returnConfigTypes(),
     };
     try {
       const res = await postAuthorized(url, payload);
@@ -131,6 +138,11 @@ const CreateMasterConfiguration = ({ history }) => {
       setTimeout(() => {
         setloader({ ...loader, msg: "" });
       }, 5000);
+      setMasterConfiguration({
+        ...masterConfiguration,
+        app_name: { appId: "", appName: "", id: 0 },
+        module_name: { moduleId: 0, moduleName: "", routeKey: "" },
+      });
     } catch (error) {
       setloader({
         ...loader,
@@ -145,16 +157,56 @@ const CreateMasterConfiguration = ({ history }) => {
   };
 
   const onPageSelect = (e: ChangeEvent<HTMLInputElement>, key: number) => {
-    const { checked } = e.target;
+    const { name, checked } = e.target;
 
     const newPages = [...modulePageMasterList];
-    console.log({ key, checked });
     newPages[key] = {
       ...newPages[key],
-      checked,
+      [name]: checked,
     };
 
     setModulePageMasterList(newPages);
+  };
+
+  const returnConfigTypes = () => {
+    const configTypes: any[] = [];
+
+    for (let i = 0; i < modulePageMasterList?.length; i++) {
+      const page = modulePageMasterList[i];
+      if (page.create) {
+        configTypes.push({
+          priviledge_type: "create",
+          route_key: `${page.routeKey}create`,
+          route_path: page.routePath,
+          is_active: true,
+        });
+      }
+      if (page.update) {
+        configTypes.push({
+          priviledge_type: "update",
+          route_key: `${page.routeKey}update`,
+          route_path: page.routePath,
+          is_active: true,
+        });
+      }
+      if (page.delete) {
+        configTypes.push({
+          priviledge_type: "delete",
+          route_key: `${page.routeKey}delete`,
+          route_path: page.routePath,
+          is_active: true,
+        });
+      }
+      if (page.get) {
+        configTypes.push({
+          priviledge_type: "get",
+          route_key: `${page.routeKey}get`,
+          route_path: page.routePath,
+          is_active: true,
+        });
+      }
+    }
+    return configTypes;
   };
 
   useEffect(() => {
@@ -166,7 +218,6 @@ const CreateMasterConfiguration = ({ history }) => {
   useEffect(() => {
     getPageMaster();
   }, [masterConfiguration?.module_name?.moduleId]);
-  console.log({ modulePageMasterList });
   return (
     <>
       <FlexDiv justifyContentCenter>
@@ -174,70 +225,79 @@ const CreateMasterConfiguration = ({ history }) => {
       </FlexDiv>
 
       <FlexDiv justifyContentCenter>
-        <FlexDiv justifyContentSpaceEvenly width="80%">
-          <Container>
-            <MyFormSelect
-              name="app_name"
-              list={[]}
-              fieldErrors={{}}
-              selectProps={{
-                renderValue: (val) => val?.appId,
-              }}
-              value={masterConfiguration?.app_name}
-              onChange={(target) => onChange(target)}
-              label="App Name *"
-              options={appMasterList}
-              optionLabel="appId"
-            />
-          </Container>{" "}
-          <div style={{ margin: "auto 0px" }}>
-            <FaArrowRight />
-          </div>
-          <Container>
-            <MyFormSelect
-              name="role_name"
-              list={[]}
-              fieldErrors={{}}
-              selectProps={{
-                renderValue: (val) => val?.roleName,
-              }}
-              value={masterConfiguration?.role_name}
-              onChange={(target) => onChange(target)}
-              label="App Role *"
-              options={appRoleMasterList?.filter(
-                (i) => i?.appId === masterConfiguration?.app_name?.id
-              )}
-              optionLabel="roleName"
-            />
+        <FlexDiv justifyContentSpaceEvenly width="90%">
+          <Container style={{ width: "20%" }}>
+            <FormControl>
+              <FormLabel>App Type*</FormLabel>
+              <Autocomplete
+                value={masterConfiguration?.app_type}
+                onChange={(e, value) => onChange({ name: "app_type", value })}
+                options={appTypes}
+                getOptionLabel={(option: any) => option?.name}
+              />
+            </FormControl>
           </Container>
-          <div style={{ margin: "auto 0px" }}>
+          <div style={{ margin: "3% 0px 0px 0px" }}>
             <FaArrowRight />
           </div>
-          <Container>
-            <MyFormSelect
-              name="module_name"
-              list={[]}
-              fieldErrors={{}}
-              selectProps={{
-                renderValue: (val) => val?.moduleName,
-              }}
-              value={masterConfiguration?.module_name}
-              onChange={(target) => onChange(target)}
-              label="Module Name *"
-              options={moduleMasterList?.filter(
-                (i) => i?.appId === masterConfiguration?.app_name?.id
-              )}
-            />
+          <Container style={{ width: "20%" }}>
+            <FormControl>
+              <FormLabel>App Name*</FormLabel>
+              <Autocomplete
+                value={masterConfiguration?.app_name}
+                onChange={(e, value) => onChange({ name: "app_name", value })}
+                options={appMasterList?.filter(
+                  (i) => i?.appType === masterConfiguration?.app_type?.value
+                )}
+                getOptionLabel={(option: any) => option?.appId}
+              />
+            </FormControl>
+          </Container>
+          <div style={{ margin: "3% 0px 0px 0px" }}>
+            <FaArrowRight />
+          </div>
+          <Container style={{ width: "20%" }}>
+            <FormControl>
+              <FormLabel>Role Name*</FormLabel>
+
+              <Autocomplete
+                value={masterConfiguration?.role_name}
+                onChange={(e, value) => onChange({ name: "role_name", value })}
+                options={appRoleMasterList?.filter(
+                  (i) => i?.appId === masterConfiguration?.app_name?.id
+                )}
+                getOptionLabel={(option: any) => option?.roleName}
+              />
+            </FormControl>
+          </Container>
+          <div style={{ margin: "3% 0px 0px 0px" }}>
+            <FaArrowRight />
+          </div>
+          <Container style={{ width: "20%" }}>
+            <FormControl>
+              <FormLabel>Module Name*</FormLabel>
+
+              <Autocomplete
+                value={masterConfiguration?.module_name}
+                onChange={(e, value) =>
+                  onChange({ name: "module_name", value })
+                }
+                options={moduleMasterList?.filter(
+                  (i) => i?.appId === masterConfiguration?.app_name?.id
+                )}
+                getOptionLabel={(option: any) => option?.moduleName}
+              />
+            </FormControl>
           </Container>
         </FlexDiv>
       </FlexDiv>
       {masterConfiguration?.module_name?.moduleId && (
-        <ListMasterConfiguration
+        <ListMasterConfigurationTable
           onPageSelect={onPageSelect}
           modulePageMasterList={modulePageMasterList}
         />
       )}
-      <FlexDiv justifyContentFlexEnd width="70%">
+      <FlexDiv justifyContentFlexEnd width="80%" margin="8% 0px 0px 0px">
         <Button variant="contained" color="success" onClick={onSubmit}>
           Submit
         </Button>

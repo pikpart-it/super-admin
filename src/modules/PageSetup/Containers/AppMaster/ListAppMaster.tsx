@@ -23,6 +23,7 @@ const headers = [
   "Id",
   "App Name",
   "App Id",
+  "App Type",
   "App Version",
   "Is Active",
   "Stop Last Version",
@@ -32,6 +33,7 @@ export type appMasterTypes = {
   appId: string;
   appName: string;
   appVersion: string;
+  appType: string;
   id: number;
   isActive: boolean;
   isStopPrevVersion: boolean;
@@ -91,6 +93,9 @@ const ListAppMaster = ({ history }) => {
                         </StyledTableCell>
                         <StyledTableCell align="center">
                           {row?.appId}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          {row?.appType}
                         </StyledTableCell>
                         <StyledTableCell align="center">
                           {row?.appVersion}

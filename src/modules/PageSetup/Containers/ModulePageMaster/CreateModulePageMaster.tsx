@@ -1,6 +1,6 @@
-import { Button, FormControlLabel, Switch } from "@mui/material";
+import { Autocomplete, FormControl, FormLabel, Input } from "@mui/joy";
+import { Button } from "@mui/material";
 import { useEffect, useState } from "react";
-import { FormInput, MyFormSelect } from "../../../../components/Forms/Form";
 import { Loader } from "../../../../components/Loader";
 import MsgCard from "../../../../components/MsgCard";
 import { H2Heading } from "../../../../components/styled";
@@ -11,11 +11,9 @@ import {
   putAuthorized,
 } from "../../../../services";
 import { FlexDiv } from "../../../../style/styled";
-import { Container } from "../RoleMaster/CreateRoleMaster";
-import { appMasterTypes } from "../AppMaster/ListAppMaster";
-import { appModuleMasterTypes } from "../AppModuleMaster/ListAppModuleMaster";
-import { modulePageMasterTypes } from "./ListModulePageMaster";
 import { moduleMasterTypes } from "../ModuleMaster/ListModules";
+import { Container } from "../RoleMaster/CreateRoleMaster";
+import { modulePageMasterTypes } from "./ListModulePageMaster";
 
 const CreateModulePageMaster = ({ history }) => {
   const dataForEdit: modulePageMasterTypes = history?.location?.state;
@@ -30,7 +28,7 @@ const CreateModulePageMaster = ({ history }) => {
   const [modulePageMaster, setModulePageMaster] = useState({
     page_name: "",
     page_description: "",
-    module_name: { moduleName: "", id: 0 },
+    module_name: { moduleName: "", id: 0, routeKey: "" },
     route_key: "",
     route_path: "",
   });
@@ -56,11 +54,13 @@ const CreateModulePageMaster = ({ history }) => {
 
   const onSubmit = async () => {
     setloader({ ...loader, isLoading: true });
-
+    const { moduleName, routeKey } = modulePageMaster?.module_name;
     const payload = {
       ...modulePageMaster,
       module_name: modulePageMaster?.module_name?.moduleName,
       module_id: modulePageMaster?.module_name?.id,
+      route_key: `${moduleName}${routeKey}${modulePageMaster?.page_name}`,
+      route_path: `/${moduleName}/${modulePageMaster?.page_name}`,
     };
     try {
       let res;
@@ -83,6 +83,14 @@ const CreateModulePageMaster = ({ history }) => {
       setTimeout(() => {
         setloader({ ...loader, msg: "" });
       }, 5000);
+      setModulePageMaster({
+        ...modulePageMaster,
+        module_name: { moduleName: "", id: 0, routeKey: "" },
+        page_description: "",
+        page_name: "",
+        route_key: "",
+        route_path: "",
+      });
     } catch (error) {
       setloader({
         ...loader,
@@ -113,7 +121,6 @@ const CreateModulePageMaster = ({ history }) => {
   useEffect(() => {
     getModuleMasterList();
   }, []);
-  console.log({ modulePageMaster, dataForEdit });
   return (
     <>
       <FlexDiv justifyContentCenter>
@@ -123,58 +130,41 @@ const CreateModulePageMaster = ({ history }) => {
       <FlexDiv justifyContentCenter>
         <FlexDiv column alignItemsCenter width="80%">
           <Container>
-            <MyFormSelect
-              name="module_name"
-              list={[]}
-              fieldErrors={{}}
-              selectProps={{
-                renderValue: (val) => val?.moduleName,
-              }}
-              value={modulePageMaster?.module_name}
-              onChange={(target) => onChange(target)}
-              label="Module Name"
-              options={moduleMasterList}
-            />
+            <FormControl>
+              <FormLabel>Module Name*</FormLabel>
+              <Autocomplete
+                value={modulePageMaster?.module_name}
+                onChange={(e, value) =>
+                  onChange({ name: "module_name", value })
+                }
+                options={moduleMasterList}
+                getOptionLabel={(option: any) => option?.moduleName}
+              />
+            </FormControl>
           </Container>
 
           <Container>
-            <FormInput
+            <FormControl>
+              <FormLabel>Page Name*</FormLabel>
+            </FormControl>
+            <Input
               type="text"
               name="page_name"
-              fieldErrors={{}}
               value={modulePageMaster?.page_name}
-              onChange={(target) => onChange(target)}
-              label="Page Name"
+              onChange={({ target }) => onChange(target)}
+              placeholder="Page Name"
             />
           </Container>
           <Container>
-            <FormInput
+            <FormControl>
+              <FormLabel>Page Description*</FormLabel>
+            </FormControl>
+            <Input
               type="text"
               name="page_description"
-              fieldErrors={{}}
               value={modulePageMaster?.page_description}
-              onChange={(target) => onChange(target)}
-              label="Page Description"
-            />
-          </Container>
-          <Container>
-            <FormInput
-              type="text"
-              name="route_key"
-              fieldErrors={{}}
-              value={modulePageMaster?.route_key}
-              onChange={(target) => onChange(target)}
-              label="Route Key"
-            />
-          </Container>
-          <Container>
-            <FormInput
-              type="text"
-              name="route_path"
-              fieldErrors={{}}
-              value={modulePageMaster?.route_path}
-              onChange={(target) => onChange(target)}
-              label="Route Path"
+              onChange={({ target }) => onChange(target)}
+              placeholder="Page Description"
             />
           </Container>
         </FlexDiv>

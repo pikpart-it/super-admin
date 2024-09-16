@@ -112,7 +112,7 @@ const AddBusinessUnit = ({ history }) => {
   const [bannerSelected, setBannerSelected] = useState<any>(null);
   const [brandLogoSelected, setBrandLogoSelected] = useState<any>(null);
   const [brandIconSelected, setBrandIconSelected] = useState<any>(null);
-  
+
   const getBrands = async () => {
     try {
       let url = `${config.baseUrl}/admin/vehicle-Brands?vehicleType=${serviceCenter[0]?.serviceCenterData?.serve_vehicle_type}`;
@@ -499,7 +499,6 @@ const AddBusinessUnit = ({ history }) => {
       }
 
       let url = `${config.baseUrl}/manufacturer/addBusinessUnit`;
-      console.log("check payloadData", payloadData);
       try {
         const response = await postAuthorized(url, payloadData);
         setLoader({ ...loader, error: false, msg: response?.data?.message });
