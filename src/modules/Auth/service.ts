@@ -61,3 +61,9 @@ export async function sendOTP({
     console.error(e);
   }
 }
+
+export const Logout = () => {
+  localStorage.clear();
+
+  window.location.href = "/";
+};

@@ -140,9 +140,7 @@ const NewLoginPage = ({ history }) => {
 
   return (
     <div>
-      {showRegistionForm ? (
-        <RegisterUser toggle={() => setShowRegistraionForm(false)} />
-      ) : passwordReset ? (
+      {passwordReset ? (
         <ResetPassword toggle={() => setPasswordReset(false)} />
       ) : (
         <MainDiv>
@@ -164,7 +162,7 @@ const NewLoginPage = ({ history }) => {
                   fontSize: "2rem",
                 }}
               >
-                Login as
+                Login
               </div>
               <div
                 style={{
@@ -207,21 +205,6 @@ const NewLoginPage = ({ history }) => {
                       style={{ width: "100%" }}
                     />
                   </div>
-                  <FlexDiv
-                    justifyContentSpaceBetween
-                    style={{ fontWeight: "bold" }}
-                  >
-                    <p>Forgot Password?</p>
-                    <p
-                      style={{
-                        textDecoration: "underline",
-                        cursor: "pointer",
-                      }}
-                      onClick={() => setPasswordReset(true)}
-                    >
-                      Click Here
-                    </p>
-                  </FlexDiv>
                 </>
 
                 <div>
@@ -246,37 +229,6 @@ const NewLoginPage = ({ history }) => {
                 </span>
                 of Pikpart Smart Garage
               </div>
-
-              <FlexDiv
-                style={{ marginTop: "1.5rem" }}
-                justifyContentCenter
-                alignItemsCenter
-                column
-              >
-                <FlexDiv justifyContentCenter>
-                  <div style={{ fontWeight: "bold" }}>
-                    <p> Don't have an account?</p>
-                  </div>
-                  <div
-                    style={{
-                      border: "1px solid #E14924",
-                      color: "#E14924",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      borderRadius: "22px",
-                      padding: "6px 12px",
-                      marginLeft: "15px",
-                      cursor: "pointer",
-                    }}
-                    onClick={() => {
-                      setShowRegistraionForm(true);
-                    }}
-                  >
-                    Register Now
-                  </div>
-                </FlexDiv>
-              </FlexDiv>
             </div>
           </LoginBox>
         </MainDiv>

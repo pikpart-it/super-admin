@@ -1,10 +1,14 @@
 import React from "react";
 import { FlexDiv } from "../../../style/styled";
+import { RoutesPath } from "../../../config/routes.config";
 
-function Logout() {
+function Logout({ history }) {
   React.useEffect(() => {
-    localStorage.clear();
-    window.location.href = "/";
+    console.log("runnning");
+    window.location.reload();
+    // localStorage.clear();
+    // sessionStorage.clear();
+    // history.replace(RoutesPath.NewLoginPage);
   }, []);
   return (
     <FlexDiv

@@ -6,6 +6,7 @@ import Logo from "../assets/images/Final-Logo-white-pikpaprt.png";
 import { RoutesPath } from "../config/routes.config";
 import { AppIcon, DarkButton, FlexDiv, HeaderDiv } from "../style/styled";
 import { Span, UserMenuLink, UserProfileMenu } from "./styled";
+import { Logout } from "../modules/Auth/service";
 const StyledLink = styled(Link)`
   text-decoration: none;
   display: block;
@@ -49,7 +50,7 @@ function Header(props: any) {
             {/* <StyledLink to={dashboardLink}>Dashboard</StyledLink>
 
             <StyledLink to={RoutesPath.PrivacyPolicy}>Policies</StyledLink> */}
-            <StyledLink to={RoutesPath.Logout}>Log Out</StyledLink>
+            <StyledLink onClick={Logout}>Log Out</StyledLink>
           </UserProfileMenu>
         ) : null}
       </UserMenuLink>
