@@ -40,7 +40,7 @@ const CreateMasterConfiguration = ({ history }) => {
     module_name: { moduleName: "", moduleId: 0, routeKey: "" },
     app_name: { appName: "", id: 0, appId: "" },
     app_type: { name: "", value: "" },
-    role_name: { roleName: "", id: 0 },
+    role_name: { roleName: "", id: 0, roleId: 0 },
     app_id: "",
     role_id: "",
     priviledge_type: "Create",
@@ -112,7 +112,7 @@ const CreateMasterConfiguration = ({ history }) => {
         app_name: masterConfiguration?.app_name.appId,
         app_id: masterConfiguration?.app_name.id,
         role_name: masterConfiguration?.role_name.roleName,
-        role_id: masterConfiguration?.role_name.id,
+        role_id: masterConfiguration?.role_name.roleId,
         is_active: masterConfiguration?.is_active,
         priviledge_type: masterConfiguration?.priviledge_type,
       }));
