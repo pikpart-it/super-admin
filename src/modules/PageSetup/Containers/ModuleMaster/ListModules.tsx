@@ -32,96 +32,69 @@ export type moduleMasterTypes = {
   routeKey: string;
   id: number;
 };
-const ListModules = ({ history }) => {
-  const [moduleMasterList, setModuleMasterList] = useState<moduleMasterTypes[]>(
-    []
-  );
+const ListModules = ({ moduleMasterList, deleteItem, edit }) => {
   const [removeModal, setRemoveModal] = useState<any>({
     show: false,
     type: "confirm",
     id: "",
   });
-  const getModuleMaster = async () => {
-    let url = `${config.baseUrl}/superAdmin/moduleMasters`;
 
-    try {
-      const { data } = await getAuthorized(url);
-      setModuleMasterList(data?.data);
-    } catch (error) {}
-  };
-  const deleteItem = async (id: number) => {
-    let url = `${config.baseUrl}/superAdmin/deactivateModuleMaster`;
-
-    try {
-      const { data } = await putAuthorized(url, { id });
-      getModuleMaster();
-    } catch (error) {}
-  };
-
-  useEffect(() => {
-    getModuleMaster();
-  }, []);
   return (
     <>
-      <FlexDiv justifyContentCenter>
-        <H2Heading>Module Master List</H2Heading>
-      </FlexDiv>
+      {moduleMasterList?.length > 0 ? (
+        <FlexDiv width="100%" justifyContentCenter style={{ margin: "30px" }}>
+          <TableContainer sx={{ width: "800px" }} component={Paper}>
+            <Table sx={{ minWidth: "fit-content" }} aria-label="vehicle models">
+              <Header titles={headers} color="#000" />
+              <TableBody>
+                {moduleMasterList.length
+                  ? moduleMasterList.map((row, index: number) => {
+                      return (
+                        <StyledTableRow key={row?.id}>
+                          <StyledTableCell align="center">
+                            {row?.id}
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            {row?.moduleName}
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            {row?.moduleDescription}
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            {row?.routeKey}
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            <FlexDiv justifyContentSpaceEvenly>
+                              <IconButton onClick={() => edit(row)}>
+                                <FaEdit />
+                              </IconButton>
+                              <IconButton
+                                onClick={() =>
+                                  setRemoveModal({
+                                    ...removeModal,
+                                    show: true,
+                                    id: row.id,
+                                  })
+                                }
+                              >
+                                <FaTrash />
+                              </IconButton>
+                            </FlexDiv>
+                          </StyledTableCell>
+                        </StyledTableRow>
+                      );
+                    })
+                  : null}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </FlexDiv>
+      ) : (
+        <FlexDiv justifyContentCenter>
+          <h2>No Data Found</h2>
+        </FlexDiv>
+      )}
 
-      <FlexDiv
-        width="100%"
-        justifyContentCenter
-        style={{ marginBottom: "20px" }}
-      >
-        <TableContainer sx={{ width: "800px" }} component={Paper}>
-          <Table sx={{ minWidth: "fit-content" }} aria-label="vehicle models">
-            <Header titles={headers} color="#000" />
-            <TableBody>
-              {moduleMasterList.length
-                ? moduleMasterList.map((row, index: number) => {
-                    return (
-                      <StyledTableRow key={row?.id}>
-                        <StyledTableCell align="center">
-                          {row?.id}
-                        </StyledTableCell>
-                        <StyledTableCell align="center">
-                          {row?.moduleName}
-                        </StyledTableCell>
-                        <StyledTableCell align="center">
-                          {row?.moduleDescription}
-                        </StyledTableCell>
-                        <StyledTableCell align="center">
-                          {row?.routeKey}
-                        </StyledTableCell>
-                        <StyledTableCell align="center">
-                          <FlexDiv justifyContentSpaceEvenly>
-                            <IconButton
-                              onClick={() =>
-                                history?.push(RoutesPath.CreateModule, row)
-                              }
-                            >
-                              <FaEdit />
-                            </IconButton>
-                            <IconButton
-                              onClick={() =>
-                                setRemoveModal({
-                                  ...removeModal,
-                                  show: true,
-                                  id: row.id,
-                                })
-                              }
-                            >
-                              <FaTrash />
-                            </IconButton>
-                          </FlexDiv>
-                        </StyledTableCell>
-                      </StyledTableRow>
-                    );
-                  })
-                : null}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </FlexDiv>
       <ModalConfirmation
         toggleModal={removeModal.show}
         setToggleModal={() => setRemoveModal({ ...removeModal, show: false })}

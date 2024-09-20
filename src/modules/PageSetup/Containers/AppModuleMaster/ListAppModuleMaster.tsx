@@ -39,108 +39,76 @@ export type appModuleMasterTypes = {
   moduleId: number;
   routeKey: string;
 };
-const ListAppModuleMaster = ({ history }) => {
-  const [appModuleMasterList, setAppModuleMasterList] = useState<
-    appModuleMasterTypes[]
-  >([]);
+const ListAppModuleMaster = ({ edit, deleteItem, appModuleMasterList }) => {
   const [removeModal, setRemoveModal] = useState<any>({
     show: false,
     type: "confirm",
     id: "",
   });
-  const getAppMasterList = async () => {
-    let url = `${config.baseUrl}/superAdmin/appModuleMasters`;
 
-    try {
-      const { data } = await getAuthorized(url);
-      setAppModuleMasterList(data?.data);
-    } catch (error) {}
-  };
-
-  const deleteItem = async (id: number) => {
-    let url = `${config.baseUrl}/superAdmin/deactivateAppModuleMaster`;
-
-    try {
-      const { data } = await putAuthorized(url, { id });
-      getAppMasterList();
-    } catch (error) {}
-  };
-
-  useEffect(() => {
-    getAppMasterList();
-  }, []);
   return (
     <>
-      <FlexDiv justifyContentCenter>
-        <H2Heading>App Module Master List</H2Heading>
-      </FlexDiv>
+      {appModuleMasterList?.length > 0 ? (
+        <FlexDiv width="100%" justifyContentCenter style={{ margin: "30px" }}>
+          <TableContainer sx={{ width: "800px" }} component={Paper}>
+            <Table sx={{ minWidth: "fit-content" }} aria-label="vehicle models">
+              <Header titles={headers} color="#000" />
+              <TableBody>
+                {appModuleMasterList.length
+                  ? appModuleMasterList.map((row) => {
+                      return (
+                        <StyledTableRow key={row?.id}>
+                          <StyledTableCell align="center">
+                            {row?.id}
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            {row?.appName}
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            {row?.appId}
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            {row?.moduleName}
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            {row?.routeKey}
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            {row?.isActive ? "Yes" : "No"}
+                          </StyledTableCell>
 
-      <FlexDiv
-        width="100%"
-        justifyContentCenter
-        style={{ marginBottom: "20px" }}
-      >
-        <TableContainer sx={{ width: "800px" }} component={Paper}>
-          <Table sx={{ minWidth: "fit-content" }} aria-label="vehicle models">
-            <Header titles={headers} color="#000" />
-            <TableBody>
-              {appModuleMasterList.length
-                ? appModuleMasterList.map((row) => {
-                    return (
-                      <StyledTableRow key={row?.id}>
-                        <StyledTableCell align="center">
-                          {row?.id}
-                        </StyledTableCell>
-                        <StyledTableCell align="center">
-                          {row?.appName}
-                        </StyledTableCell>
-                        <StyledTableCell align="center">
-                          {row?.appId}
-                        </StyledTableCell>
-                        <StyledTableCell align="center">
-                          {row?.moduleName}
-                        </StyledTableCell>
-                        <StyledTableCell align="center">
-                          {row?.routeKey}
-                        </StyledTableCell>
-                        <StyledTableCell align="center">
-                          {row?.isActive ? "Yes" : "No"}
-                        </StyledTableCell>
+                          <StyledTableCell align="center">
+                            <FlexDiv justifyContentSpaceEvenly>
+                              <IconButton onClick={() => edit(row)}>
+                                <FaEdit />
+                              </IconButton>
 
-                        <StyledTableCell align="center">
-                          <FlexDiv justifyContentSpaceEvenly>
-                            <IconButton
-                              onClick={() =>
-                                history?.push(
-                                  RoutesPath.CreateAppModuleMaster,
-                                  row
-                                )
-                              }
-                            >
-                              <FaEdit />
-                            </IconButton>
-
-                            <IconButton
-                              onClick={() =>
-                                setRemoveModal({
-                                  ...removeModal,
-                                  show: true,
-                                  id: row.id,
-                                })
-                              }
-                            >
-                              <FaTrash />
-                            </IconButton>
-                          </FlexDiv>
-                        </StyledTableCell>
-                      </StyledTableRow>
-                    );
-                  })
-                : null}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </FlexDiv>
+                              <IconButton
+                                onClick={() =>
+                                  setRemoveModal({
+                                    ...removeModal,
+                                    show: true,
+                                    id: row.id,
+                                  })
+                                }
+                              >
+                                <FaTrash />
+                              </IconButton>
+                            </FlexDiv>
+                          </StyledTableCell>
+                        </StyledTableRow>
+                      );
+                    })
+                  : null}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </FlexDiv>
+      ) : (
+        <FlexDiv justifyContentCenter>
+          <h2>No Data Found</h2>
+        </FlexDiv>
+      )}
       <ModalConfirmation
         toggleModal={removeModal.show}
         setToggleModal={() => setRemoveModal({ ...removeModal, show: false })}

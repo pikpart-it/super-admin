@@ -24,50 +24,24 @@ export type roleTypes = {
   isActive: string;
   id: number;
 };
-const RoleMasterList = ({ history }) => {
-  const [rolesList, setRolesList] = useState<roleTypes[]>([]);
+const RoleMasterList = ({ rolesList, deleteItem, edit }) => {
   const [removeModal, setRemoveModal] = useState<any>({
     show: false,
     type: "confirm",
     id: "",
   });
-  const getRolesList = async () => {
-    let url = `${config.baseUrl}/superAdmin/roleMasters`;
 
-    try {
-      const { data } = await getAuthorized(url);
-      setRolesList(data?.data);
-    } catch (error) {}
-  };
-  const deleteItem = async (id: number) => {
-    let url = `${config.baseUrl}/superAdmin/deactivateRoleMaster`;
-
-    try {
-      const { data } = await putAuthorized(url, { id });
-      getRolesList();
-    } catch (error) {}
-  };
-
-  useEffect(() => {
-    getRolesList();
-  }, []);
   return (
     <>
-      <FlexDiv justifyContentCenter>
-        <H2Heading>Role Master List</H2Heading>
-      </FlexDiv>
-
-      <FlexDiv
-        width="100%"
-        justifyContentCenter
-        style={{ marginBottom: "20px" }}
-      >
-        <TableContainer sx={{ width: "800px" }} component={Paper}>
-          <Table sx={{ minWidth: "fit-content" }} aria-label="vehicle models">
-            <Header titles={headers} color="#000" />
-            <TableBody>
-              {rolesList.length
-                ? rolesList.map((row, index: number) => {
+      {rolesList?.length > 0 ? (
+        <FlexDiv width="100%" justifyContentCenter style={{ margin: "30px" }}>
+          <TableContainer sx={{ width: "800px" }} component={Paper}>
+            <Table sx={{ minWidth: "fit-content" }} aria-label="vehicle models">
+              <Header titles={headers} color="#000" />
+              <TableBody>
+                {rolesList
+                  ?.sort((a, b) => b?.id - a?.id)
+                  ?.map((row) => {
                     return (
                       <StyledTableRow key={row?.id}>
                         <StyledTableCell align="center">
@@ -94,12 +68,16 @@ const RoleMasterList = ({ history }) => {
                         </StyledTableCell>
                       </StyledTableRow>
                     );
-                  })
-                : null}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </FlexDiv>
+                  })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </FlexDiv>
+      ) : (
+        <FlexDiv justifyContentCenter>
+          <h2>No Data Found</h2>
+        </FlexDiv>
+      )}
       <ModalConfirmation
         toggleModal={removeModal.show}
         setToggleModal={() => setRemoveModal({ ...removeModal, show: false })}

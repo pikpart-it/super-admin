@@ -13,13 +13,17 @@ import {
 import { FlexDiv } from "../../../../style/styled";
 import { Container } from "../RoleMaster/CreateRoleMaster";
 import { appMasterTypes } from "../AppMaster/ListAppMaster";
-import { appModuleMasterTypes } from "./ListAppModuleMaster";
+import ListAppModuleMaster, {
+  appModuleMasterTypes,
+} from "./ListAppModuleMaster";
 import { moduleMasterTypes } from "../ModuleMaster/ListModules";
 import { Autocomplete, FormControl, FormLabel } from "@mui/joy";
 import { appTypes } from "../AppMaster/CreateAppMaster";
 
 const CreateAppModuleMaster = ({ history }) => {
-  const dataForEdit: appModuleMasterTypes = history?.location?.state;
+  const [appModuleMasterList, setAppModuleMasterList] = useState<
+    appModuleMasterTypes[]
+  >([]);
   const [appMasterList, setAppMasterList] = useState<appMasterTypes[]>([]);
   const [moduleMasterList, setModuleMasterList] = useState<moduleMasterTypes[]>(
     []
@@ -33,7 +37,48 @@ const CreateAppModuleMaster = ({ history }) => {
     app_name: { appName: "", appId: "", id: 0 },
     app_type: { name: "", value: "" },
     module_name: { moduleName: "", id: 0, routeKey: "" },
+    id: 0,
   });
+
+  const getAppModuleMasterList = async () => {
+    let url = `${config.baseUrl}/superAdmin/appModuleMasters`;
+
+    try {
+      const { data } = await getAuthorized(url);
+      setAppModuleMasterList(data?.data);
+    } catch (error) {}
+  };
+
+  const deleteItem = async (id: number) => {
+    setloader({ ...loader, isLoading: true });
+
+    let url = `${config.baseUrl}/superAdmin/deactivateAppModuleMaster`;
+
+    try {
+      const { data } = await putAuthorized(url, { id });
+      setloader({
+        ...loader,
+        isLoading: false,
+        error: data?.error,
+        msg: data?.message,
+      });
+      setTimeout(() => {
+        setloader({ ...loader, msg: "" });
+      }, 2000);
+      getAppModuleMasterList();
+      reset();
+    } catch (error) {
+      setloader({
+        ...loader,
+        isLoading: false,
+        error: true,
+        msg: "Something Went Wrong",
+      });
+      setTimeout(() => {
+        setloader({ ...loader, msg: "" });
+      }, 5000);
+    }
+  };
 
   const getModuleMaster = async () => {
     let url = `${config.baseUrl}/superAdmin/moduleMasters`;
@@ -74,14 +119,15 @@ const CreateAppModuleMaster = ({ history }) => {
       module_id: module_name?.id,
       route_key: module_name?.routeKey,
       app_type: undefined,
+      id: appModuleMaster?.id || undefined,
     };
     try {
       let res;
       let url;
 
-      if (dataForEdit?.id) {
+      if (appModuleMaster?.id) {
         url = `${config.baseUrl}/superAdmin/updateAppModuleMaster`;
-        res = await putAuthorized(url, { ...payload, id: dataForEdit?.id });
+        res = await putAuthorized(url, payload);
       } else {
         url = `${config.baseUrl}/superAdmin/addAppModuleMaster`;
         res = await postAuthorized(url, payload);
@@ -96,12 +142,8 @@ const CreateAppModuleMaster = ({ history }) => {
       setTimeout(() => {
         setloader({ ...loader, msg: "" });
       }, 5000);
-      setAppModuleMaster({
-        ...appModuleMaster,
-        app_name: { appName: "", appId: "", id: 0 },
-        app_type: { name: "", value: "" },
-        module_name: { id: 0, moduleName: "", routeKey: "" },
-      });
+      getAppModuleMasterList();
+      reset();
     } catch (error) {
       setloader({
         ...loader,
@@ -114,21 +156,39 @@ const CreateAppModuleMaster = ({ history }) => {
       }, 5000);
     }
   };
+  const edit = (dataForEdit: appModuleMasterTypes) => {
+    setAppModuleMaster({
+      ...appModuleMaster,
+      id: dataForEdit?.id,
+      module_name: moduleMasterList?.find(
+        (i) => i?.id === dataForEdit?.moduleId
+      )!,
+      app_name: appMasterList?.find((i) => i?.id === dataForEdit?.appId)!,
+      app_type: appTypes?.find((i) => i?.value === dataForEdit?.appType)!,
+    });
+  };
+  const reset = () => {
+    setAppModuleMaster({
+      ...appModuleMaster,
+      id: 0,
+      app_name: { appName: "", appId: "", id: 0 },
+      app_type: { name: "", value: "" },
+      module_name: { id: 0, moduleName: "", routeKey: "" },
+    });
+  };
+  const submitEnabled = () => {
+    const { app_name, app_type, module_name } = appModuleMaster;
+
+    if (!app_name?.appName || !app_type?.value || !module_name?.moduleName) {
+      return true;
+    } else {
+      return false;
+    }
+  };
 
   useEffect(() => {
-    if (dataForEdit) {
-      setAppModuleMaster({
-        ...appModuleMaster,
-        module_name: moduleMasterList?.find(
-          (i) => i?.id === dataForEdit?.moduleId
-        )!,
-        app_name: appMasterList?.find((i) => i?.id === dataForEdit?.appId)!,
-        app_type: appTypes?.find((i) => i?.value === dataForEdit?.appType)!,
-      });
-    }
-  }, [dataForEdit, appMasterList, moduleMasterList]);
-  useEffect(() => {
     getAppMasterList();
+    getAppModuleMasterList();
     getModuleMaster();
   }, []);
 
@@ -181,10 +241,20 @@ const CreateAppModuleMaster = ({ history }) => {
         </FlexDiv>
       </FlexDiv>
       <FlexDiv justifyContentFlexEnd width="70%">
-        <Button variant="contained" color="success" onClick={onSubmit}>
+        <Button
+          variant="contained"
+          color="success"
+          onClick={onSubmit}
+          disabled={submitEnabled()}
+        >
           Submit
         </Button>
       </FlexDiv>
+      <ListAppModuleMaster
+        appModuleMasterList={appModuleMasterList}
+        deleteItem={deleteItem}
+        edit={edit}
+      />
       <Loader variant="m" isLoading={loader.isLoading} />
       <MsgCard
         style={{

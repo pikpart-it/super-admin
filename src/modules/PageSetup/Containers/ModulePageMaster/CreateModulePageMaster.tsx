@@ -13,13 +13,17 @@ import {
 import { FlexDiv } from "../../../../style/styled";
 import { moduleMasterTypes } from "../ModuleMaster/ListModules";
 import { Container } from "../RoleMaster/CreateRoleMaster";
-import { modulePageMasterTypes } from "./ListModulePageMaster";
+import ListModulePageMaster, {
+  modulePageMasterTypes,
+} from "./ListModulePageMaster";
 
-const CreateModulePageMaster = ({ history }) => {
-  const dataForEdit: modulePageMasterTypes = history?.location?.state;
+const CreateModulePageMaster = () => {
   const [moduleMasterList, setModuleMasterList] = useState<moduleMasterTypes[]>(
     []
   );
+  const [modulePageMasterList, setModulePageMasterList] = useState<
+    modulePageMasterTypes[]
+  >([]);
   const [loader, setloader] = useState({
     isLoading: false,
     error: false,
@@ -31,7 +35,49 @@ const CreateModulePageMaster = ({ history }) => {
     module_name: { moduleName: "", id: 0, routeKey: "" },
     route_key: "",
     route_path: "",
+    id: 0,
   });
+
+  const getModulePageMasterList = async () => {
+    let url = `${config.baseUrl}/superAdmin/modulePageMasters`;
+
+    try {
+      const { data } = await getAuthorized(url);
+      setModulePageMasterList(data?.data);
+    } catch (error) {}
+  };
+
+  const deleteItem = async (id: number) => {
+    setloader({ ...loader, isLoading: true });
+    let url = `${config.baseUrl}/superAdmin/deactivateModulePageMaster`;
+
+    try {
+      const { data } = await putAuthorized(url, { id });
+      getModulePageMasterList();
+      reset();
+
+      setloader({
+        ...loader,
+        isLoading: false,
+        error: data?.error,
+        msg: data?.message,
+      });
+      setTimeout(() => {
+        setloader({ ...loader, msg: "" });
+      }, 5000);
+    } catch (error) {
+      setloader({
+        ...loader,
+        isLoading: false,
+        error: true,
+        msg: "Something Went Wrong!",
+      });
+      setTimeout(() => {
+        setloader({ ...loader, msg: "" });
+      }, 5000);
+    }
+  };
+
   const getModuleMasterList = async () => {
     let url = `${config.baseUrl}/superAdmin/moduleMasters`;
 
@@ -61,14 +107,15 @@ const CreateModulePageMaster = ({ history }) => {
       module_id: modulePageMaster?.module_name?.id,
       route_key: `${moduleName}${routeKey}${modulePageMaster?.page_name}`,
       route_path: `/${moduleName}/${modulePageMaster?.page_name}`,
+      id: modulePageMaster?.id || undefined,
     };
     try {
       let res;
       let url;
 
-      if (dataForEdit?.id) {
+      if (modulePageMaster?.id) {
         url = `${config.baseUrl}/superAdmin/updateModulePageMaster`;
-        res = await putAuthorized(url, { ...payload, id: dataForEdit?.id });
+        res = await putAuthorized(url, payload);
       } else {
         url = `${config.baseUrl}/superAdmin/addModulePageMaster`;
         res = await postAuthorized(url, payload);
@@ -83,14 +130,8 @@ const CreateModulePageMaster = ({ history }) => {
       setTimeout(() => {
         setloader({ ...loader, msg: "" });
       }, 5000);
-      setModulePageMaster({
-        ...modulePageMaster,
-        module_name: { moduleName: "", id: 0, routeKey: "" },
-        page_description: "",
-        page_name: "",
-        route_key: "",
-        route_path: "",
-      });
+      getModulePageMasterList();
+      reset();
     } catch (error) {
       setloader({
         ...loader,
@@ -103,22 +144,44 @@ const CreateModulePageMaster = ({ history }) => {
       }, 5000);
     }
   };
+  const reset = () => {
+    setModulePageMaster({
+      ...modulePageMaster,
+      id: 0,
+      module_name: { moduleName: "", id: 0, routeKey: "" },
+      page_description: "",
+      page_name: "",
+      route_key: "",
+      route_path: "",
+    });
+  };
+
+  const edit = (dataForEdit: modulePageMasterTypes) => {
+    setModulePageMaster({
+      ...modulePageMaster,
+      id: dataForEdit?.id,
+      module_name: moduleMasterList?.find(
+        (i) => i?.id === dataForEdit?.moduleId
+      )!,
+      route_key: dataForEdit?.routeKey,
+      page_name: dataForEdit?.pageName,
+      page_description: dataForEdit?.pageDescription,
+      route_path: dataForEdit?.routePath,
+    });
+  };
+
+  const submitEnabled = () => {
+    const { module_name, page_name, page_description } = modulePageMaster;
+
+    if (!module_name?.moduleName || !page_name || !page_description) {
+      return true;
+    } else {
+      return false;
+    }
+  };
 
   useEffect(() => {
-    if (dataForEdit) {
-      setModulePageMaster({
-        ...modulePageMaster,
-        module_name: moduleMasterList?.find(
-          (i) => i?.id === dataForEdit?.moduleId
-        )!,
-        route_key: dataForEdit?.routeKey,
-        page_name: dataForEdit?.pageName,
-        page_description: dataForEdit?.pageDescription,
-        route_path: dataForEdit?.routePath,
-      });
-    }
-  }, [dataForEdit, moduleMasterList]);
-  useEffect(() => {
+    getModulePageMasterList();
     getModuleMasterList();
   }, []);
   return (
@@ -147,12 +210,14 @@ const CreateModulePageMaster = ({ history }) => {
             <FormControl>
               <FormLabel>Page Name*</FormLabel>
             </FormControl>
-            <Input
-              type="text"
-              name="page_name"
-              value={modulePageMaster?.page_name}
-              onChange={({ target }) => onChange(target)}
-              placeholder="Page Name"
+            <Autocomplete
+              inputValue={modulePageMaster?.page_name}
+              options={modulePageMasterList}
+              getOptionLabel={(option: any) => option?.pageName}
+              freeSolo={true}
+              onInputChange={(e, value) =>
+                onChange({ name: "page_name", value })
+              }
             />
           </Container>
           <Container>
@@ -170,10 +235,20 @@ const CreateModulePageMaster = ({ history }) => {
         </FlexDiv>
       </FlexDiv>
       <FlexDiv justifyContentFlexEnd width="70%">
-        <Button variant="contained" color="success" onClick={onSubmit}>
+        <Button
+          variant="contained"
+          color="success"
+          onClick={onSubmit}
+          disabled={submitEnabled()}
+        >
           Submit
         </Button>
       </FlexDiv>
+      <ListModulePageMaster
+        deleteItem={deleteItem}
+        edit={edit}
+        modulePageMasterList={modulePageMasterList}
+      />
       <Loader variant="m" isLoading={loader.isLoading} />
       <MsgCard
         style={{

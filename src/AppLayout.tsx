@@ -10,19 +10,13 @@ import { userRoles } from "./config/constants/userRoles";
 
 const pages = [
   "SuperAdminCreateRoleMaster",
-  "SuperAdminRoleMasterList",
-  "SuperAdminAppRoleMasterSetup",
-  "SuperAdminAppRoleMasterSetupList",
-  "SuperAdminAppMasterList",
   "SuperAdminCreateAppMaster",
-  "SuperAdminAppModuleMasterSetupList",
+  "SuperAdminAppRoleMasterSetup",
+  "SuperAdminModuleMasterCreate",
   "SuperAdminAppModuleMasterSetup",
   "SuperAdminModulePageMasterSetup",
-  "SuperAdminModulePageMasterSetupList",
   "SuperAdminMasterConfiguration",
   "SuperAdminMasterConfigurationList",
-  "SuperAdminModuleMasterCreate",
-  "SuperAdminModuleMasterList",
 ];
 
 function AppLayout() {

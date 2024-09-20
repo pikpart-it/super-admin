@@ -5,18 +5,23 @@ import styled from "styled-components";
 import { FormInput } from "../../../../components/Forms/Form";
 import { Button, FormControlLabel, Switch } from "@mui/material";
 import { config } from "../../../../config/config";
-import { postAuthorized, putAuthorized } from "../../../../services";
+import {
+  getAuthorized,
+  postAuthorized,
+  putAuthorized,
+} from "../../../../services";
 import { Loader } from "../../../../components/Loader";
 import MsgCard from "../../../../components/MsgCard";
-import { roleTypes } from "./RoleMasterList";
-import { FormControl, FormLabel, Input } from "@mui/joy";
+import RoleMasterList, { roleTypes } from "./RoleMasterList";
+import { Autocomplete, FormControl, FormLabel, Input } from "@mui/joy";
+import { enableSubmit } from "../../../../utility/func";
 export const Container = styled.div`
   width: 25%;
   margin: 10px 0px;
   text-align: center;
 `;
-const CreateRoleMaster = ({ history }) => {
-  const dataForEdit: roleTypes = history?.location?.state;
+const CreateRoleMaster = () => {
+  const [rolesList, setRolesList] = useState<roleTypes[]>([]);
   const [loader, setloader] = useState({
     isLoading: false,
     error: false,
@@ -25,39 +30,33 @@ const CreateRoleMaster = ({ history }) => {
   const [roleData, setRoleData] = useState({
     role_name: "",
     role_description: "",
-    id: undefined || 0,
   });
 
-  const onChange = (target) => {
-    const { name, value } = target;
+  const getRolesList = async () => {
+    let url = `${config.baseUrl}/superAdmin/roleMasters`;
 
-    setRoleData({ ...roleData, [name]: value });
-  };
-
-  const onSubmit = async () => {
-    setloader({ ...loader, isLoading: true });
     try {
-      let res;
-      let url;
+      const { data } = await getAuthorized(url);
+      setRolesList(data?.data);
+    } catch (error) {}
+  };
+  const deleteItem = async (id: number) => {
+    setloader({ ...loader, isLoading: true });
+    let url = `${config.baseUrl}/superAdmin/deactivateRoleMaster`;
 
-      if (dataForEdit?.id) {
-        url = `${config.baseUrl}/superAdmin/updateRoleName`;
-        res = await putAuthorized(url, roleData);
-      } else {
-        url = `${config.baseUrl}/superAdmin/roleMaster`;
-        res = await postAuthorized(url, roleData);
-      }
-
+    try {
+      const { data } = await putAuthorized(url, { id });
       setloader({
         ...loader,
         isLoading: false,
-        error: res?.data?.error,
-        msg: res?.data?.message,
+        error: data?.error,
+        msg: data?.message,
       });
       setTimeout(() => {
         setloader({ ...loader, msg: "" });
-      }, 5000);
-      setRoleData({ ...roleData, id: 0, role_description: "", role_name: "" });
+      }, 2000);
+      getRolesList();
+      reset();
     } catch (error) {
       setloader({
         ...loader,
@@ -71,17 +70,60 @@ const CreateRoleMaster = ({ history }) => {
     }
   };
 
-  useEffect(() => {
-    if (dataForEdit) {
-      setRoleData({
-        ...roleData,
-        id: dataForEdit?.id,
-        role_name: dataForEdit?.roleName,
-        role_description: dataForEdit?.roleDescription,
-      });
-    }
-  }, [dataForEdit]);
+  const onChange = (target) => {
+    const { name, value } = target;
 
+    setRoleData({ ...roleData, [name]: value });
+  };
+
+  const onSubmit = async () => {
+    setloader({ ...loader, isLoading: true });
+    try {
+      let res;
+      let url;
+
+      url = `${config.baseUrl}/superAdmin/roleMaster`;
+      res = await postAuthorized(url, roleData);
+
+      setloader({
+        ...loader,
+        isLoading: false,
+        error: res?.data?.error,
+        msg: res?.data?.message,
+      });
+      setTimeout(() => {
+        setloader({ ...loader, msg: "" });
+      }, 5000);
+      getRolesList();
+      reset();
+    } catch (error) {
+      setloader({
+        ...loader,
+        isLoading: false,
+        error: true,
+        msg: "Something Went Wrong",
+      });
+      setTimeout(() => {
+        setloader({ ...loader, msg: "" });
+      }, 5000);
+    }
+  };
+  const reset = () => {
+    setRoleData({ ...roleData, role_description: "", role_name: "" });
+  };
+  const submitEnabled = enableSubmit(roleData);
+  const edit = (dataForEdit: roleTypes) => {
+    setRoleData({
+      ...roleData,
+      //id: dataForEdit?.id,
+      role_name: dataForEdit?.roleName,
+      role_description: dataForEdit?.roleDescription,
+    });
+  };
+
+  useEffect(() => {
+    getRolesList();
+  }, []);
   return (
     <>
       <FlexDiv justifyContentCenter>
@@ -94,11 +136,15 @@ const CreateRoleMaster = ({ history }) => {
             <FormControl>
               <FormLabel>Role Name*</FormLabel>
             </FormControl>
-            <Input
-              name="role_name"
-              type="text"
-              value={roleData.role_name}
-              onChange={({ target }) => onChange(target)}
+
+            <Autocomplete
+              inputValue={roleData.role_name}
+              options={rolesList}
+              getOptionLabel={(option: any) => option?.roleName}
+              freeSolo={true}
+              onInputChange={(e, value) =>
+                onChange({ name: "role_name", value })
+              }
             />
           </Container>
           <Container>
@@ -115,10 +161,21 @@ const CreateRoleMaster = ({ history }) => {
         </FlexDiv>
       </FlexDiv>
       <FlexDiv justifyContentFlexEnd width="70%">
-        <Button variant="contained" color="success" onClick={onSubmit}>
+        <Button
+          variant="contained"
+          color="success"
+          onClick={onSubmit}
+          disabled={submitEnabled}
+        >
           Submit
         </Button>
       </FlexDiv>
+
+      <RoleMasterList
+        rolesList={rolesList}
+        deleteItem={deleteItem}
+        edit={edit}
+      />
       <Loader variant="m" isLoading={loader.isLoading} />
       <MsgCard
         style={{

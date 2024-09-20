@@ -411,3 +411,28 @@ export const giveFinalPrices = (sellPrice, discountPercent, taxRate) => {
   let productRate = discountedPrice - taxAmount;
   return { discountAmount, taxAmount, discountedPrice, productRate };
 };
+
+export function enableSubmit(obj) {
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      const value = obj[key];
+
+      // Check if the value is invalid (null, undefined, or an empty string)
+      if (
+        value === null ||
+        value === undefined ||
+        value === "" ||
+        value === 0 ||
+        value?.id === 0
+      ) {
+        return true;
+      }
+
+      // Additional validation rules can be added here
+      // e.g., check if a number is positive, if an email is in the correct format, etc.
+    }
+  }
+
+  // If all properties have valid data, return true
+  return false;
+}

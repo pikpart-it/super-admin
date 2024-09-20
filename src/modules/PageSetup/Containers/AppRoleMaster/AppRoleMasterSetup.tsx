@@ -11,7 +11,9 @@ import { FormInput, MyFormSelect } from "../../../../components/Forms/Form";
 import { Button } from "@mui/material";
 import { Container } from "../RoleMaster/CreateRoleMaster";
 import { roleTypes } from "../RoleMaster/RoleMasterList";
-import { appRoleMasterSetupTypes } from "./AppRoleMasterSetupList";
+import AppRoleMasterSetupList, {
+  appRoleMasterSetupTypes,
+} from "./AppRoleMasterSetupList";
 import { Loader } from "../../../../components/Loader";
 import MsgCard from "../../../../components/MsgCard";
 import { appMasterTypes } from "../AppMaster/ListAppMaster";
@@ -19,13 +21,15 @@ import { Autocomplete, FormControl, FormLabel } from "@mui/joy";
 import { appTypes } from "../AppMaster/CreateAppMaster";
 
 const AppRoleMasterSetup = ({ history }) => {
-  const dataForEdit: appRoleMasterSetupTypes = history?.location?.state;
   const [loader, setloader] = useState({
     isLoading: false,
     error: false,
     msg: "",
   });
   const [rolesList, setRolesList] = useState<roleTypes[]>([]);
+  const [appRoleMasterList, setAppRoleMasterList] = useState<
+    appRoleMasterSetupTypes[]
+  >([]);
   const [appMasterList, setAppMasterList] = useState<appMasterTypes[]>([]);
   const [appRoleMaster, setAppRoleMaster] = useState({
     app_name: { appName: "", id: 0, appId: "" },
@@ -33,6 +37,7 @@ const AppRoleMasterSetup = ({ history }) => {
     app_id: "",
     role_name: { roleName: "", id: 0 },
     role_id: "",
+    id: 0,
   });
   const getAppMasterList = async () => {
     let url = `${config.baseUrl}/superAdmin/appMasters`;
@@ -50,55 +55,33 @@ const AppRoleMasterSetup = ({ history }) => {
       setRolesList(data?.data);
     } catch (error) {}
   };
-  const onChange = (target) => {
-    const { name, value } = target;
-    if (name === "role_name") {
-      setAppRoleMaster({ ...appRoleMaster, [name]: value });
-    } else {
-      setAppRoleMaster({
-        ...appRoleMaster,
-        [name]: value,
-      });
-    }
-  };
 
-  const onSubmit = async () => {
+  const getAppRoleMaster = async () => {
+    let url = `${config.baseUrl}/superAdmin/appRoleMasters`;
+
+    try {
+      const { data } = await getAuthorized(url);
+      setAppRoleMasterList(data?.data);
+    } catch (error) {}
+  };
+  const deleteItem = async (id: number) => {
     setloader({ ...loader, isLoading: true });
 
-    const payload = {
-      ...appRoleMaster,
-      role_name: appRoleMaster?.role_name?.roleName,
-      role_id: appRoleMaster?.role_name?.id,
-      app_name: appRoleMaster?.app_name?.appId,
-      app_id: appRoleMaster?.app_name?.id,
-      app_type: undefined,
-    };
-    try {
-      let res;
-      let url;
+    let url = `${config.baseUrl}/superAdmin/deactivateAppRoleMaster`;
 
-      if (dataForEdit?.id) {
-        url = `${config.baseUrl}/superAdmin/updateAppRoleMaster `;
-        res = await putAuthorized(url, { ...payload, id: dataForEdit?.id });
-      } else {
-        url = `${config.baseUrl}/superAdmin/addAppRoleMaster`;
-        res = await postAuthorized(url, payload);
-      }
+    try {
+      const { data } = await putAuthorized(url, { id });
       setloader({
         ...loader,
         isLoading: false,
-        error: res?.data?.error,
-        msg: res?.data?.message,
+        error: data?.error,
+        msg: data?.message,
       });
       setTimeout(() => {
         setloader({ ...loader, msg: "" });
-      }, 5000);
-      setAppRoleMaster({
-        ...appRoleMaster,
-        app_name: { appId: "", appName: "", id: 0 },
-        app_type: { name: "", value: "" },
-        role_name: { id: 0, roleName: "" },
-      });
+      }, 2000);
+      getAppRoleMaster();
+      reset();
     } catch (error) {
       setloader({
         ...loader,
@@ -112,22 +95,96 @@ const AppRoleMasterSetup = ({ history }) => {
     }
   };
 
-  useEffect(() => {
-    if (dataForEdit) {
+  const onChange = (target) => {
+    const { name, value } = target;
+    if (name === "role_name") {
+      setAppRoleMaster({ ...appRoleMaster, [name]: value });
+    } else {
       setAppRoleMaster({
         ...appRoleMaster,
-        app_name: appMasterList?.find((i) => i?.id === dataForEdit?.appId)!,
-        role_name: rolesList?.find(
-          (i) => i?.roleName === dataForEdit?.roleName
-        )!,
-        app_type: appTypes?.find((i) => i?.value === dataForEdit?.appType)!,
+        [name]: value,
       });
     }
-  }, [dataForEdit, rolesList, appMasterList]);
+  };
+  const reset = () => {
+    setAppRoleMaster({
+      ...appRoleMaster,
+      app_name: { appId: "", appName: "", id: 0 },
+      app_type: { name: "", value: "" },
+      role_name: { id: 0, roleName: "" },
+      id: 0,
+    });
+  };
+
+  const submitEnabled = () => {
+    const { app_type, app_name, role_name } = appRoleMaster;
+    if (!role_name?.roleName || !app_name || !app_type?.value) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+  const onSubmit = async () => {
+    setloader({ ...loader, isLoading: true });
+
+    const payload = {
+      ...appRoleMaster,
+      role_name: appRoleMaster?.role_name?.roleName,
+      role_id: appRoleMaster?.role_name?.id,
+      app_name: appRoleMaster?.app_name?.appId,
+      app_id: appRoleMaster?.app_name?.id,
+      app_type: undefined,
+      id: appRoleMaster?.id || undefined,
+    };
+    try {
+      let res;
+      let url;
+
+      if (appRoleMaster?.id) {
+        url = `${config.baseUrl}/superAdmin/updateAppRoleMaster `;
+        res = await putAuthorized(url, payload);
+      } else {
+        url = `${config.baseUrl}/superAdmin/addAppRoleMaster`;
+        res = await postAuthorized(url, payload);
+      }
+      setloader({
+        ...loader,
+        isLoading: false,
+        error: res?.data?.error,
+        msg: res?.data?.message,
+      });
+      setTimeout(() => {
+        setloader({ ...loader, msg: "" });
+      }, 5000);
+      getAppRoleMaster();
+      reset();
+    } catch (error) {
+      setloader({
+        ...loader,
+        isLoading: false,
+        error: true,
+        msg: "Something Went Wrong",
+      });
+      setTimeout(() => {
+        setloader({ ...loader, msg: "" });
+      }, 5000);
+    }
+  };
+
+  const edit = (dataForEdit: appRoleMasterSetupTypes) => {
+    setAppRoleMaster({
+      ...appRoleMaster,
+      id: dataForEdit?.id,
+      app_name: appMasterList?.find((i) => i?.id === dataForEdit?.appId)!,
+      role_name: rolesList?.find((i) => i?.roleName === dataForEdit?.roleName)!,
+      app_type: appTypes?.find((i) => i?.value === dataForEdit?.appType)!,
+    });
+  };
 
   useEffect(() => {
     getRolesList();
     getAppMasterList();
+    getAppRoleMaster();
   }, []);
 
   return (
@@ -177,10 +234,20 @@ const AppRoleMasterSetup = ({ history }) => {
         </FlexDiv>
       </FlexDiv>
       <FlexDiv justifyContentFlexEnd width="70%">
-        <Button variant="contained" color="success" onClick={onSubmit}>
+        <Button
+          variant="contained"
+          color="success"
+          onClick={onSubmit}
+          disabled={submitEnabled()}
+        >
           Submit
         </Button>
       </FlexDiv>
+      <AppRoleMasterSetupList
+        appRoleMasterList={appRoleMasterList}
+        edit={edit}
+        deleteItem={deleteItem}
+      />
       <Loader variant="m" isLoading={loader.isLoading} />
       <MsgCard
         style={{

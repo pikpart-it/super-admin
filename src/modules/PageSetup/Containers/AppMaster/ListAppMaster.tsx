@@ -38,51 +38,24 @@ export type appMasterTypes = {
   isActive: boolean;
   isStopPrevVersion: boolean;
 };
-const ListAppMaster = ({ history }) => {
-  const [appMasterList, setAppMasterList] = useState<appMasterTypes[]>([]);
+const ListAppMaster = ({ edit, appMasterList, deleteItem }) => {
   const [removeModal, setRemoveModal] = useState<any>({
     show: false,
     type: "confirm",
     id: "",
   });
-  const getAppMasterList = async () => {
-    let url = `${config.baseUrl}/superAdmin/appMasters`;
 
-    try {
-      const { data } = await getAuthorized(url);
-      setAppMasterList(data?.data);
-    } catch (error) {}
-  };
-
-  const deleteItem = async (id: number) => {
-    let url = `${config.baseUrl}/superAdmin/deactivateAppMaster`;
-
-    try {
-      const { data } = await putAuthorized(url, { id });
-      getAppMasterList();
-    } catch (error) {}
-  };
-
-  useEffect(() => {
-    getAppMasterList();
-  }, []);
   return (
     <>
-      <FlexDiv justifyContentCenter>
-        <H2Heading>App Master List</H2Heading>
-      </FlexDiv>
-
-      <FlexDiv
-        width="100%"
-        justifyContentCenter
-        style={{ marginBottom: "20px" }}
-      >
-        <TableContainer sx={{ width: "800px" }} component={Paper}>
-          <Table sx={{ minWidth: "fit-content" }} aria-label="vehicle models">
-            <Header titles={headers} color="#000" />
-            <TableBody>
-              {appMasterList.length
-                ? appMasterList.map((row) => {
+      {appMasterList?.length > 0 ? (
+        <FlexDiv width="100%" justifyContentCenter style={{ margin: "30px" }}>
+          <TableContainer sx={{ width: "800px" }} component={Paper}>
+            <Table sx={{ minWidth: "fit-content" }} aria-label="vehicle models">
+              <Header titles={headers} color="#000" />
+              <TableBody>
+                {appMasterList
+                  ?.sort((a, b) => b?.id - a?.id)
+                  ?.map((row) => {
                     return (
                       <StyledTableRow key={row?.id}>
                         <StyledTableCell align="center">
@@ -108,11 +81,7 @@ const ListAppMaster = ({ history }) => {
                         </StyledTableCell>
                         <StyledTableCell align="center">
                           <FlexDiv justifyContentSpaceEvenly>
-                            <IconButton
-                              onClick={() =>
-                                history?.push(RoutesPath.CreateAppMaster, row)
-                              }
-                            >
+                            <IconButton onClick={() => edit(row)}>
                               <FaEdit />
                             </IconButton>
 
@@ -131,12 +100,16 @@ const ListAppMaster = ({ history }) => {
                         </StyledTableCell>
                       </StyledTableRow>
                     );
-                  })
-                : null}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </FlexDiv>
+                  })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </FlexDiv>
+      ) : (
+        <FlexDiv justifyContentCenter>
+          <h2>No Data Found</h2>
+        </FlexDiv>
+      )}
       <ModalConfirmation
         toggleModal={removeModal.show}
         setToggleModal={() => setRemoveModal({ ...removeModal, show: false })}

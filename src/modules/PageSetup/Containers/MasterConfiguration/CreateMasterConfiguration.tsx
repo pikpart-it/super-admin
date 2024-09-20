@@ -249,7 +249,7 @@ const CreateMasterConfiguration = ({ history }) => {
                 options={appMasterList?.filter(
                   (i) => i?.appType === masterConfiguration?.app_type?.value
                 )}
-                getOptionLabel={(option: any) => option?.appId}
+                getOptionLabel={(option: any) => option?.appName}
               />
             </FormControl>
           </Container>

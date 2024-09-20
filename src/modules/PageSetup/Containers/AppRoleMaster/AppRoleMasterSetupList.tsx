@@ -27,52 +27,24 @@ export type appRoleMasterSetupTypes = {
   id: number;
   appId: any;
 };
-const AppRoleMasterSetupList = ({ history }) => {
-  const [appRoleMasterList, setAppRoleMasterList] = useState<
-    appRoleMasterSetupTypes[]
-  >([]);
+const AppRoleMasterSetupList = ({ appRoleMasterList, edit, deleteItem }) => {
   const [removeModal, setRemoveModal] = useState<any>({
     show: false,
     type: "confirm",
     id: "",
   });
-  const getAppRoleMaster = async () => {
-    let url = `${config.baseUrl}/superAdmin/appRoleMasters`;
 
-    try {
-      const { data } = await getAuthorized(url);
-      setAppRoleMasterList(data?.data);
-    } catch (error) {}
-  };
-  const deleteItem = async (id: number) => {
-    let url = `${config.baseUrl}/superAdmin/deactivateAppRoleMaster`;
-
-    try {
-      const { data } = await putAuthorized(url, { id });
-      getAppRoleMaster();
-    } catch (error) {}
-  };
-
-  useEffect(() => {
-    getAppRoleMaster();
-  }, []);
   return (
     <>
-      <FlexDiv justifyContentCenter>
-        <H2Heading>App Role Master List</H2Heading>
-      </FlexDiv>
-
-      <FlexDiv
-        width="100%"
-        justifyContentCenter
-        style={{ marginBottom: "20px" }}
-      >
-        <TableContainer sx={{ width: "800px" }} component={Paper}>
-          <Table sx={{ minWidth: "fit-content" }} aria-label="vehicle models">
-            <Header titles={headers} color="#000" />
-            <TableBody>
-              {appRoleMasterList.length
-                ? appRoleMasterList.map((row, index: number) => {
+      {appRoleMasterList?.length > 0 ? (
+        <FlexDiv width="100%" justifyContentCenter style={{ margin: "20px" }}>
+          <TableContainer sx={{ width: "800px" }} component={Paper}>
+            <Table sx={{ minWidth: "fit-content" }} aria-label="vehicle models">
+              <Header titles={headers} color="#000" />
+              <TableBody>
+                {appRoleMasterList
+                  ?.sort((a, b) => b?.id - a?.id)
+                  ?.map((row) => {
                     return (
                       <StyledTableRow key={row?.id}>
                         <StyledTableCell align="center">
@@ -89,14 +61,7 @@ const AppRoleMasterSetupList = ({ history }) => {
                         </StyledTableCell>
                         <StyledTableCell align="center">
                           <FlexDiv justifyContentSpaceEvenly>
-                            <IconButton
-                              onClick={() =>
-                                history?.push(
-                                  RoutesPath.AppRoleMasterSetup,
-                                  row
-                                )
-                              }
-                            >
+                            <IconButton onClick={() => edit(row)}>
                               <FaEdit />
                             </IconButton>
                             <IconButton
@@ -114,12 +79,17 @@ const AppRoleMasterSetupList = ({ history }) => {
                         </StyledTableCell>
                       </StyledTableRow>
                     );
-                  })
-                : null}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </FlexDiv>
+                  })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </FlexDiv>
+      ) : (
+        <FlexDiv justifyContentCenter>
+          <h2>No Data Found</h2>
+        </FlexDiv>
+      )}
+
       <ModalConfirmation
         toggleModal={removeModal.show}
         setToggleModal={() => setRemoveModal({ ...removeModal, show: false })}

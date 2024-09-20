@@ -11,7 +11,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 const headers = [
   "Module Name",
   "Page Name",
-  "Page Description",
+  //  "Page Description",
   "Route Key",
   "Route Path",
   "Is Active",
@@ -42,25 +42,43 @@ const ListMasterConfigurationTable = ({
                         key={row?.id}
                         style={{ background: "#fff" }}
                       >
-                        <StyledTableCell align="center">
+                        <StyledTableCell
+                          align="center"
+                          style={{ fontSize: "12px" }}
+                        >
                           {row?.moduleName}
                         </StyledTableCell>
-                        <StyledTableCell align="center">
+                        <StyledTableCell
+                          align="center"
+                          style={{ fontSize: "12px" }}
+                        >
                           {row?.pageName}
                         </StyledTableCell>
-                        <StyledTableCell align="center">
+                        {/* <StyledTableCell align="center" style={{fontSize:'12px'}}>
                           {row?.pageDescription}
-                        </StyledTableCell>
-                        <StyledTableCell align="center">
+                        </StyledTableCell> */}
+                        <StyledTableCell
+                          align="center"
+                          style={{ fontSize: "12px" }}
+                        >
                           {row?.routeKey}
                         </StyledTableCell>
-                        <StyledTableCell align="center">
+                        <StyledTableCell
+                          align="center"
+                          style={{ fontSize: "12px" }}
+                        >
                           {row?.routePath}
                         </StyledTableCell>
-                        <StyledTableCell align="center">
+                        <StyledTableCell
+                          align="center"
+                          style={{ fontSize: "12px" }}
+                        >
                           {row?.isActive ? "Yes" : "No"}
                         </StyledTableCell>
-                        <StyledTableCell align="center">
+                        <StyledTableCell
+                          align="center"
+                          style={{ fontSize: "12px" }}
+                        >
                           <input
                             name="checked"
                             type="checkbox"
@@ -70,7 +88,10 @@ const ListMasterConfigurationTable = ({
                         </StyledTableCell>
                         {row?.checked ? (
                           <>
-                            <StyledTableCell align="center">
+                            <StyledTableCell
+                              align="center"
+                              style={{ fontSize: "12px" }}
+                            >
                               <input
                                 name="create"
                                 type="checkbox"
@@ -78,7 +99,10 @@ const ListMasterConfigurationTable = ({
                                 onChange={(e) => onPageSelect(e, index)}
                               />
                             </StyledTableCell>
-                            <StyledTableCell align="center">
+                            <StyledTableCell
+                              align="center"
+                              style={{ fontSize: "12px" }}
+                            >
                               <input
                                 name="update"
                                 type="checkbox"
@@ -86,7 +110,10 @@ const ListMasterConfigurationTable = ({
                                 onChange={(e) => onPageSelect(e, index)}
                               />
                             </StyledTableCell>
-                            <StyledTableCell align="center">
+                            <StyledTableCell
+                              align="center"
+                              style={{ fontSize: "12px" }}
+                            >
                               <input
                                 name="delete"
                                 type="checkbox"
@@ -94,7 +121,10 @@ const ListMasterConfigurationTable = ({
                                 onChange={(e) => onPageSelect(e, index)}
                               />
                             </StyledTableCell>
-                            <StyledTableCell align="center">
+                            <StyledTableCell
+                              align="center"
+                              style={{ fontSize: "12px" }}
+                            >
                               <input
                                 name="get"
                                 type="checkbox"

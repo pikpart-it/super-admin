@@ -5,19 +5,24 @@ import { Loader } from "../../../../components/Loader";
 import MsgCard from "../../../../components/MsgCard";
 import { H2Heading } from "../../../../components/styled";
 import { config } from "../../../../config/config";
-import { postAuthorized, putAuthorized } from "../../../../services";
+import {
+  getAuthorized,
+  postAuthorized,
+  putAuthorized,
+} from "../../../../services";
 import { FlexDiv } from "../../../../style/styled";
-import { appMasterTypes } from "./ListAppMaster";
+import ListAppMaster, { appMasterTypes } from "./ListAppMaster";
 import { Container } from "../RoleMaster/CreateRoleMaster";
 import { Autocomplete, FormControl, FormLabel, Input } from "@mui/joy";
+import { enableSubmit } from "../../../../utility/func";
 
 export const appTypes = [
   { name: "Mobile", value: "mobile" },
   { name: "Web", value: "web" },
 ];
 
-const CreateAppMaster = ({ history }) => {
-  const dataForEdit: appMasterTypes = history?.location?.state;
+const CreateAppMaster = () => {
+  const [appMasterList, setAppMasterList] = useState<appMasterTypes[]>([]);
   const [loader, setloader] = useState({
     isLoading: false,
     error: false,
@@ -29,7 +34,48 @@ const CreateAppMaster = ({ history }) => {
     app_id: "",
     app_version: "",
     is_stop_prev_version: false,
+    id: 0,
   });
+
+  const getAppMasterList = async () => {
+    let url = `${config.baseUrl}/superAdmin/appMasters`;
+
+    try {
+      const { data } = await getAuthorized(url);
+      setAppMasterList(data?.data);
+    } catch (error) {}
+  };
+
+  const deleteItem = async (id: number) => {
+    setloader({ ...loader, isLoading: true });
+
+    let url = `${config.baseUrl}/superAdmin/deactivateAppMaster`;
+
+    try {
+      const { data } = await putAuthorized(url, { id });
+      setloader({
+        ...loader,
+        isLoading: false,
+        error: data?.error,
+        msg: data?.message,
+      });
+      setTimeout(() => {
+        setloader({ ...loader, msg: "" });
+      }, 2000);
+      getAppMasterList();
+      reset();
+    } catch (error) {
+      setloader({
+        ...loader,
+        isLoading: false,
+        error: true,
+        msg: "Something Went Wrong",
+      });
+      setTimeout(() => {
+        setloader({ ...loader, msg: "" });
+      }, 5000);
+    }
+  };
 
   const onChange = (target) => {
     const { name, value } = target;
@@ -39,18 +85,37 @@ const CreateAppMaster = ({ history }) => {
       setAppMaster({ ...appMaster, [name]: value });
     }
   };
+  const reset = () => {
+    setAppMaster({
+      ...appMaster,
+      id: 0,
+      app_name: "",
+      app_type: { name: "", value: "" },
+      app_id: "",
+      app_version: "",
+      is_stop_prev_version: false,
+    });
+  };
 
+  const submitEnabled = () => {
+    const { app_id, app_name, app_type, app_version } = appMaster;
+    if (!app_id || !app_name || !app_type?.value || !app_version) {
+      return true;
+    } else {
+      return false;
+    }
+  };
   const onSubmit = async () => {
     setloader({ ...loader, isLoading: true });
     try {
       let res;
       let url;
 
-      if (dataForEdit?.id) {
+      if (appMaster?.id) {
         url = `${config.baseUrl}/superAdmin/appMaster`;
         res = await putAuthorized(url, {
           ...appMaster,
-          id: dataForEdit?.id,
+          id: appMaster?.id || undefined,
           app_type: appMaster?.app_type?.value,
         });
       } else {
@@ -58,6 +123,7 @@ const CreateAppMaster = ({ history }) => {
         res = await postAuthorized(url, {
           ...appMaster,
           app_type: appMaster?.app_type?.value,
+          id: appMaster?.id || undefined,
         });
       }
 
@@ -70,14 +136,8 @@ const CreateAppMaster = ({ history }) => {
       setTimeout(() => {
         setloader({ ...loader, msg: "" });
       }, 5000);
-      setAppMaster({
-        ...appMaster,
-        app_name: "",
-        app_type: { name: "", value: "" },
-        app_id: "",
-        app_version: "",
-        is_stop_prev_version: false,
-      });
+      getAppMasterList();
+      reset();
     } catch (error) {
       setloader({
         ...loader,
@@ -91,18 +151,20 @@ const CreateAppMaster = ({ history }) => {
     }
   };
 
+  const edit = (dataForEdit: appMasterTypes) => {
+    setAppMaster({
+      ...appMaster,
+      id: dataForEdit?.id,
+      app_name: dataForEdit?.appName,
+      app_version: dataForEdit?.appVersion,
+      app_id: dataForEdit?.appId,
+      is_stop_prev_version: dataForEdit?.isStopPrevVersion,
+      app_type: appTypes?.find((i) => i?.value === dataForEdit?.appType)!,
+    });
+  };
   useEffect(() => {
-    if (dataForEdit) {
-      setAppMaster({
-        ...appMaster,
-        app_name: dataForEdit?.appName,
-        app_version: dataForEdit?.appVersion,
-        app_id: dataForEdit?.appId,
-        is_stop_prev_version: dataForEdit?.isStopPrevVersion,
-        app_type: appTypes?.find((i) => i?.value === dataForEdit?.appType)!,
-      });
-    }
-  }, [dataForEdit]);
+    getAppMasterList();
+  }, []);
 
   return (
     <>
@@ -126,12 +188,14 @@ const CreateAppMaster = ({ history }) => {
           <Container>
             <FormControl>
               <FormLabel>App Name*</FormLabel>
-
-              <Input
-                name="app_name"
-                type="text"
-                value={appMaster.app_name}
-                onChange={({ target }) => onChange(target)}
+              <Autocomplete
+                inputValue={appMaster.app_name}
+                options={appMasterList}
+                getOptionLabel={(option: any) => option?.appName}
+                freeSolo={true}
+                onInputChange={(e, value) =>
+                  onChange({ name: "app_name", value })
+                }
               />
             </FormControl>
           </Container>
@@ -174,10 +238,21 @@ const CreateAppMaster = ({ history }) => {
         </FlexDiv>
       </FlexDiv>
       <FlexDiv justifyContentFlexEnd width="70%">
-        <Button variant="contained" color="success" onClick={onSubmit}>
+        <Button
+          variant="contained"
+          color="success"
+          onClick={onSubmit}
+          disabled={submitEnabled()}
+        >
           Submit
         </Button>
       </FlexDiv>
+
+      <ListAppMaster
+        edit={edit}
+        appMasterList={appMasterList}
+        deleteItem={deleteItem}
+      />
       <Loader variant="m" isLoading={loader.isLoading} />
       <MsgCard
         style={{

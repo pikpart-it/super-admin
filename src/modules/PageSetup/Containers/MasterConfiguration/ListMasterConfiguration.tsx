@@ -85,7 +85,7 @@ const ListMasterConfiguration = () => {
                 value={selectedApp?.appName}
                 onChange={(e, value) => setSelectedApp(value)}
                 options={appMasterList}
-                getOptionLabel={(option: any) => option?.appId}
+                getOptionLabel={(option: any) => option?.appName}
               />
             </FormControl>
           </Container>
