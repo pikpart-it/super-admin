@@ -25,6 +25,7 @@ export type appRoleMasterSetupTypes = {
   roleName: string;
   isActive: string;
   id: number;
+  roleId: number;
   appId: any;
 };
 const AppRoleMasterSetupList = ({ appRoleMasterList, edit, deleteItem }) => {

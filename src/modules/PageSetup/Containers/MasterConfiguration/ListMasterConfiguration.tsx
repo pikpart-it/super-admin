@@ -8,12 +8,21 @@ import { H2Heading } from "../../../../components/styled";
 import { appMasterTypes } from "../AppMaster/ListAppMaster";
 import { appRoleMasterSetupTypes } from "../AppRoleMaster/AppRoleMasterSetupList";
 import { config } from "../../../../config/config";
-import { getAuthorized } from "../../../../services";
+import { getAuthorized, putAuthorized } from "../../../../services";
 import { Container } from "../RoleMaster/CreateRoleMaster";
 import { Autocomplete, FormControl, FormLabel } from "@mui/joy";
-import { FaArrowRight } from "react-icons/fa";
-import { Paper, Table, TableBody, TableContainer } from "@mui/material";
+import { FaArrowRight, FaTrash } from "react-icons/fa";
+import {
+  IconButton,
+  Paper,
+  Table,
+  TableBody,
+  TableContainer,
+} from "@mui/material";
 import Header from "../../../../components/ListsHeader";
+import MsgCard from "../../../../components/MsgCard";
+import { Loader } from "../../../../components/Loader";
+import ModalConfirmation from "../../../ProductManufacturer/OrderManagement/component/ModalConfirmation";
 
 const headers = [
   "Module Name",
@@ -22,6 +31,7 @@ const headers = [
   "Route Key",
   "Route Path",
   "Is Active",
+  "Actions",
 ];
 
 const ListMasterConfiguration = () => {
@@ -32,6 +42,16 @@ const ListMasterConfiguration = () => {
   const [appRoleMasterList, setAppRoleMasterList] = useState<
     appRoleMasterSetupTypes[]
   >([]);
+  const [loader, setloader] = useState({
+    isLoading: false,
+    error: false,
+    msg: "",
+  });
+  const [removeModal, setRemoveModal] = useState<any>({
+    show: false,
+    type: "confirm",
+    id: "",
+  });
 
   const getAppMasterList = async () => {
     let url = `${config.baseUrl}/superAdmin/appMasters`;
@@ -52,12 +72,40 @@ const ListMasterConfiguration = () => {
   };
 
   const getConfigList = async () => {
-    let url = `${config.baseUrl}/superAdmin/masterConfigurations?role_id=${selectedRole?.id}`;
+    let url = `${config.baseUrl}/superAdmin/masterConfigurations?role_id=${selectedRole?.roleId}`;
 
     try {
       const { data } = await getAuthorized(url);
       setMasterConfigList(data?.data);
     } catch (error) {}
+  };
+  const deleteItem = async (id: number) => {
+    setloader({ ...loader, isLoading: true });
+    let url = `${config.baseUrl}/superAdmin/deactivateMasterConfiguration`;
+
+    try {
+      const { data } = await putAuthorized(url, { id });
+      setloader({
+        ...loader,
+        isLoading: false,
+        error: data?.error,
+        msg: data?.message,
+      });
+      setTimeout(() => {
+        setloader({ ...loader, msg: "" });
+      }, 2000);
+      getConfigList();
+    } catch (error) {
+      setloader({
+        ...loader,
+        isLoading: false,
+        error: true,
+        msg: "Something Went Wrong",
+      });
+      setTimeout(() => {
+        setloader({ ...loader, msg: "" });
+      }, 5000);
+    }
   };
 
   useEffect(() => {
@@ -109,13 +157,15 @@ const ListMasterConfiguration = () => {
         </FlexDiv>
       </FlexDiv>
 
-      <FlexDiv width="100%" justifyContentCenter style={{ margin: "20px" }}>
-        <TableContainer sx={{ width: "fit-content" }} component={Paper}>
-          <Table sx={{ minWidth: "fit-content" }} aria-label="vehicle models">
-            <Header titles={headers} color="#000" />
-            <TableBody>
-              {masterConfigList?.length
-                ? masterConfigList.map((row, index) => {
+      {masterConfigList?.length > 0 ? (
+        <FlexDiv width="100%" justifyContentCenter style={{ margin: "20px" }}>
+          <TableContainer sx={{ width: "fit-content" }} component={Paper}>
+            <Table sx={{ minWidth: "fit-content" }} aria-label="vehicle models">
+              <Header titles={headers} color="#000" />
+              <TableBody>
+                {masterConfigList
+                  ?.sort((a, b) => b?.id - a?.id)
+                  ?.map((row) => {
                     return (
                       <StyledTableRow
                         key={row?.id}
@@ -139,14 +189,52 @@ const ListMasterConfiguration = () => {
                         <StyledTableCell align="center">
                           {row?.isActive ? "Yes" : "No"}
                         </StyledTableCell>
+                        <StyledTableCell align="center">
+                          <IconButton
+                            onClick={() =>
+                              setRemoveModal({
+                                ...removeModal,
+                                show: true,
+                                id: row.id,
+                              })
+                            }
+                          >
+                            <FaTrash />
+                          </IconButton>
+                        </StyledTableCell>
                       </StyledTableRow>
                     );
-                  })
-                : null}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </FlexDiv>
+                  })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </FlexDiv>
+      ) : (
+        <FlexDiv justifyContentCenter>
+          <h2>No Data Found</h2>
+        </FlexDiv>
+      )}
+      <Loader variant="m" isLoading={loader.isLoading} />
+      <MsgCard
+        style={{
+          container: {
+            width: "20%",
+          },
+        }}
+        msg={loader?.msg}
+        variant={loader?.error ? "danger" : "success"}
+        ghost
+        card
+      />
+      <ModalConfirmation
+        toggleModal={removeModal.show}
+        setToggleModal={() => setRemoveModal({ ...removeModal, show: false })}
+        modal={removeModal}
+        onConfirm={() => deleteItem(removeModal.id)}
+        onCancel={() => setRemoveModal({ ...removeModal, show: false })}
+        header="Remove Item"
+        body="Are you sure to delete This Configuration?"
+      />
     </>
   );
 };

@@ -89,23 +89,24 @@ const CreateModule = ({ history }) => {
 
   const onSubmit = async () => {
     setloader({ ...loader, isLoading: true });
+    const { module_description, route_key, module_name } = moduleMaster;
 
+    const payload = {
+      module_name: module_name?.trimEnd(),
+      route_key: route_key?.trimEnd(),
+      module_description: module_description?.trimEnd(),
+      id: moduleMaster?.id || undefined,
+    };
     try {
       let res;
       let url;
 
       if (moduleMaster?.id) {
         url = `${config.baseUrl}/superAdmin/updateModuleMaster `;
-        res = await putAuthorized(url, {
-          ...moduleMaster,
-          id: moduleMaster?.id || undefined,
-        });
+        res = await putAuthorized(url, payload);
       } else {
         url = `${config.baseUrl}/superAdmin/addModuleMaster`;
-        res = await postAuthorized(url, {
-          ...moduleMaster,
-          id: moduleMaster?.id || undefined,
-        });
+        res = await postAuthorized(url, payload);
       }
       setloader({
         ...loader,

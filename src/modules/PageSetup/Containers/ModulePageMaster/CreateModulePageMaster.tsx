@@ -105,8 +105,8 @@ const CreateModulePageMaster = () => {
       ...modulePageMaster,
       module_name: modulePageMaster?.module_name?.moduleName,
       module_id: modulePageMaster?.module_name?.id,
-      route_key: `${moduleName}${routeKey}${modulePageMaster?.page_name}`,
-      route_path: `/${moduleName}/${modulePageMaster?.page_name}`,
+      route_key: `${moduleName}${routeKey}${modulePageMaster?.page_name?.trimEnd()}`,
+      route_path: `/${moduleName}/${modulePageMaster?.page_name?.trimEnd()}`,
       id: modulePageMaster?.id || undefined,
     };
     try {
