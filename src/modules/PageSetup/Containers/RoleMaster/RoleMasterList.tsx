@@ -17,7 +17,12 @@ import {
 } from "../../../../style/styled";
 import ModalConfirmation from "../../../ProductManufacturer/OrderManagement/component/ModalConfirmation";
 import { FaTrash } from "react-icons/fa";
-const headers = ["Id", "Role Name", "Role Description", "Actions"];
+const headers = [
+  "Id",
+  "Role Name",
+  "Role Description",
+  //  "Actions"
+];
 export type roleTypes = {
   roleName: string;
   roleDescription: string;
@@ -53,7 +58,7 @@ const RoleMasterList = ({ rolesList, deleteItem, edit }) => {
                         <StyledTableCell align="center">
                           {row?.roleDescription}
                         </StyledTableCell>
-                        <StyledTableCell align="center">
+                        {/* <StyledTableCell align="center">
                           <IconButton
                             onClick={() =>
                               setRemoveModal({
@@ -65,7 +70,7 @@ const RoleMasterList = ({ rolesList, deleteItem, edit }) => {
                           >
                             <FaTrash />
                           </IconButton>
-                        </StyledTableCell>
+                        </StyledTableCell> */}
                       </StyledTableRow>
                     );
                   })}
