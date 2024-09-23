@@ -17,7 +17,7 @@ import { Autocomplete, FormControl, FormLabel, Input } from "@mui/joy";
 import { enableSubmit } from "../../../../utility/func";
 export const Container = styled.div`
   width: 25%;
-  margin: 10px 0px;
+  margin: 10px;
   text-align: center;
 `;
 const CreateRoleMaster = () => {
@@ -131,8 +131,8 @@ const CreateRoleMaster = () => {
       </FlexDiv>
 
       <FlexDiv justifyContentCenter>
-        <FlexDiv column alignItemsCenter width="80%">
-          <Container>
+        <FlexDiv justifyContentSpaceBetween width="50%">
+          <Container style={{ width: "30%" }}>
             <FormControl>
               <FormLabel>Role Name*</FormLabel>
             </FormControl>
@@ -147,7 +147,7 @@ const CreateRoleMaster = () => {
               }
             />
           </Container>
-          <Container>
+          <Container style={{ width: "30%" }}>
             <FormControl>
               <FormLabel>Role Description*</FormLabel>
             </FormControl>
@@ -158,17 +158,17 @@ const CreateRoleMaster = () => {
               onChange={({ target }) => onChange(target)}
             />
           </Container>
+          <Container style={{ margin: "30px 0px", width: "10%" }}>
+            <Button
+              variant="contained"
+              color="success"
+              onClick={onSubmit}
+              disabled={submitEnabled}
+            >
+              Submit
+            </Button>
+          </Container>
         </FlexDiv>
-      </FlexDiv>
-      <FlexDiv justifyContentFlexEnd width="70%">
-        <Button
-          variant="contained"
-          color="success"
-          onClick={onSubmit}
-          disabled={submitEnabled}
-        >
-          Submit
-        </Button>
       </FlexDiv>
 
       <RoleMasterList

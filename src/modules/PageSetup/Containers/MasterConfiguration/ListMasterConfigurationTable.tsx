@@ -35,109 +35,109 @@ const ListMasterConfigurationTable = ({
           <Table sx={{ minWidth: "fit-content" }} aria-label="vehicle models">
             <Header titles={headers} color="#000" />
             <TableBody>
-              {modulePageMasterList?.length
-                ? modulePageMasterList.map((row, index) => {
-                    return (
-                      <StyledTableRow
-                        key={row?.id}
-                        style={{ background: "#fff" }}
+              {modulePageMasterList
+                ?.sort((a, b) => b?.id - a?.id)
+                ?.map((row, index) => {
+                  return (
+                    <StyledTableRow
+                      key={row?.id}
+                      style={{ background: "#fff" }}
+                    >
+                      <StyledTableCell
+                        align="center"
+                        style={{ fontSize: "12px" }}
                       >
-                        <StyledTableCell
-                          align="center"
-                          style={{ fontSize: "12px" }}
-                        >
-                          {row?.moduleName}
-                        </StyledTableCell>
-                        <StyledTableCell
-                          align="center"
-                          style={{ fontSize: "12px" }}
-                        >
-                          {row?.pageName}
-                        </StyledTableCell>
-                        {/* <StyledTableCell align="center" style={{fontSize:'12px'}}>
+                        {row?.moduleName}
+                      </StyledTableCell>
+                      <StyledTableCell
+                        align="center"
+                        style={{ fontSize: "12px" }}
+                      >
+                        {row?.pageName}
+                      </StyledTableCell>
+                      {/* <StyledTableCell align="center" style={{fontSize:'12px'}}>
                           {row?.pageDescription}
                         </StyledTableCell> */}
-                        <StyledTableCell
-                          align="center"
-                          style={{ fontSize: "12px" }}
-                        >
-                          {row?.routeKey}
-                        </StyledTableCell>
-                        <StyledTableCell
-                          align="center"
-                          style={{ fontSize: "12px" }}
-                        >
-                          {row?.routePath}
-                        </StyledTableCell>
-                        <StyledTableCell
-                          align="center"
-                          style={{ fontSize: "12px" }}
-                        >
-                          {row?.isActive ? "Yes" : "No"}
-                        </StyledTableCell>
-                        <StyledTableCell
-                          align="center"
-                          style={{ fontSize: "12px" }}
-                        >
-                          <input
-                            name="checked"
-                            type="checkbox"
-                            checked={row?.checked}
-                            onChange={(e) => onPageSelect(e, index)}
-                          />
-                        </StyledTableCell>
-                        {row?.checked ? (
-                          <>
-                            <StyledTableCell
-                              align="center"
-                              style={{ fontSize: "12px" }}
-                            >
-                              <input
-                                name="create"
-                                type="checkbox"
-                                checked={row?.create}
-                                onChange={(e) => onPageSelect(e, index)}
-                              />
-                            </StyledTableCell>
-                            <StyledTableCell
-                              align="center"
-                              style={{ fontSize: "12px" }}
-                            >
-                              <input
-                                name="update"
-                                type="checkbox"
-                                checked={row?.update}
-                                onChange={(e) => onPageSelect(e, index)}
-                              />
-                            </StyledTableCell>
-                            <StyledTableCell
-                              align="center"
-                              style={{ fontSize: "12px" }}
-                            >
-                              <input
-                                name="delete"
-                                type="checkbox"
-                                checked={row?.delete}
-                                onChange={(e) => onPageSelect(e, index)}
-                              />
-                            </StyledTableCell>
-                            <StyledTableCell
-                              align="center"
-                              style={{ fontSize: "12px" }}
-                            >
-                              <input
-                                name="get"
-                                type="checkbox"
-                                checked={row?.get}
-                                onChange={(e) => onPageSelect(e, index)}
-                              />
-                            </StyledTableCell>
-                          </>
-                        ) : null}
-                      </StyledTableRow>
-                    );
-                  })
-                : null}
+                      <StyledTableCell
+                        align="center"
+                        style={{ fontSize: "12px" }}
+                      >
+                        {row?.routeKey}
+                      </StyledTableCell>
+                      <StyledTableCell
+                        align="center"
+                        style={{ fontSize: "12px" }}
+                      >
+                        {row?.routePath}
+                      </StyledTableCell>
+                      <StyledTableCell
+                        align="center"
+                        style={{ fontSize: "12px" }}
+                      >
+                        {row?.isActive ? "Yes" : "No"}
+                      </StyledTableCell>
+                      <StyledTableCell
+                        align="center"
+                        style={{ fontSize: "12px" }}
+                      >
+                        <input
+                          name="checked"
+                          type="checkbox"
+                          checked={row?.checked}
+                          onChange={(e) => onPageSelect(e, index)}
+                        />
+                      </StyledTableCell>
+                      {row?.checked ? (
+                        <>
+                          <StyledTableCell
+                            align="center"
+                            style={{ fontSize: "12px" }}
+                          >
+                            <input
+                              name="create"
+                              type="checkbox"
+                              checked={row?.create}
+                              onChange={(e) => onPageSelect(e, index)}
+                            />
+                          </StyledTableCell>
+                          <StyledTableCell
+                            align="center"
+                            style={{ fontSize: "12px" }}
+                          >
+                            <input
+                              name="update"
+                              type="checkbox"
+                              checked={row?.update}
+                              onChange={(e) => onPageSelect(e, index)}
+                            />
+                          </StyledTableCell>
+                          <StyledTableCell
+                            align="center"
+                            style={{ fontSize: "12px" }}
+                          >
+                            <input
+                              name="delete"
+                              type="checkbox"
+                              checked={row?.delete}
+                              onChange={(e) => onPageSelect(e, index)}
+                            />
+                          </StyledTableCell>
+                          <StyledTableCell
+                            align="center"
+                            style={{ fontSize: "12px" }}
+                          >
+                            <input
+                              name="get"
+                              type="checkbox"
+                              checked={row?.get}
+                              onChange={(e) => onPageSelect(e, index)}
+                            />
+                          </StyledTableCell>
+                        </>
+                      ) : null}
+                    </StyledTableRow>
+                  );
+                })}
             </TableBody>
           </Table>
         </TableContainer>

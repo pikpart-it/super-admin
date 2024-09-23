@@ -8,7 +8,9 @@ import { userRoles } from "./constants/userRoles";
 
 const Logout = lazy(() => import("../modules/Auth/containers/Logout"));
 const Dashboard = lazy(() => import("../modules/Dashboard"));
-
+const CreateSalesAdmin = lazy(
+  () => import("../modules/CreateUsers/CreateSalesAdmin")
+);
 const {
   AddBusinessUnit,
   ListBusinessUnit,
@@ -98,6 +100,7 @@ export const routesConfig: any = [
     link: RoutesPath.Dashboard,
     path: RoutesPath.Dashboard,
   },
+
   {
     authenticated: true,
     bLabel: "NewPmDashboard",
@@ -270,7 +273,37 @@ export const routesConfig: any = [
     link: undefined,
     path: undefined,
   },
-
+  {
+    authenticated: true,
+    bLabel: "Create Users",
+    children: [
+      {
+        authenticated: true,
+        bLabel: "CreateSalesAdmin",
+        children: undefined,
+        component: CreateSalesAdmin,
+        exact: true,
+        icon: FaPlus,
+        key: "RegisterSalesAdminUsers",
+        pageTitle: "CreateSalesAdmin",
+        label: "Create Sales Admin",
+        layout: ["header", "sidebar"],
+        userAllowed: [],
+        link: RoutesPath.RegisterUser,
+        path: RoutesPath.RegisterUser,
+      },
+    ],
+    component: undefined,
+    pageTitle: "Create Users",
+    key: "RegisterUsers",
+    exact: true,
+    icon: FaBusinessTime,
+    label: "Create Users",
+    layout: [],
+    userAllowed: [],
+    link: undefined,
+    path: undefined,
+  },
   {
     authenticated: true,
     bLabel: "",

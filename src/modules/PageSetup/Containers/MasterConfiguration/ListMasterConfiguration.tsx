@@ -27,7 +27,7 @@ import ModalConfirmation from "../../../ProductManufacturer/OrderManagement/comp
 const headers = [
   "Module Name",
   "Page Name",
-  "Page Description",
+  // "Page Description",
   "Route Key",
   "Route Path",
   "Is Active",
@@ -177,9 +177,9 @@ const ListMasterConfiguration = () => {
                         <StyledTableCell align="center">
                           {row?.pageName}
                         </StyledTableCell>
-                        <StyledTableCell align="center">
+                        {/* <StyledTableCell align="center">
                           {row?.pageDescription}
-                        </StyledTableCell>
+                        </StyledTableCell> */}
                         <StyledTableCell align="center">
                           {row?.routeKey}
                         </StyledTableCell>

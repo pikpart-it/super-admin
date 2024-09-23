@@ -191,7 +191,7 @@ const CreateModulePageMaster = () => {
       </FlexDiv>
 
       <FlexDiv justifyContentCenter>
-        <FlexDiv column alignItemsCenter width="80%">
+        <FlexDiv justifyContentSpaceEvenly>
           <Container>
             <FormControl>
               <FormLabel>Module Name*</FormLabel>
@@ -232,17 +232,17 @@ const CreateModulePageMaster = () => {
               placeholder="Page Description"
             />
           </Container>
+          <Container style={{ margin: "30px 10px" }}>
+            <Button
+              variant="contained"
+              color="success"
+              onClick={onSubmit}
+              disabled={submitEnabled()}
+            >
+              Submit
+            </Button>
+          </Container>
         </FlexDiv>
-      </FlexDiv>
-      <FlexDiv justifyContentFlexEnd width="70%">
-        <Button
-          variant="contained"
-          color="success"
-          onClick={onSubmit}
-          disabled={submitEnabled()}
-        >
-          Submit
-        </Button>
       </FlexDiv>
       <ListModulePageMaster
         deleteItem={deleteItem}
