@@ -23,7 +23,6 @@ const CreateModule = ({ history }) => {
   const [moduleMaster, setModuleMaster] = useState({
     module_name: "",
     module_description: "",
-    route_key: "",
     id: 0,
   });
   const [loader, setloader] = useState({
@@ -79,8 +78,8 @@ const CreateModule = ({ history }) => {
   };
 
   const submitEnabled = () => {
-    const { module_description, route_key, module_name } = moduleMaster;
-    if (!module_name || !module_description || !route_key) {
+    const { module_description, module_name } = moduleMaster;
+    if (!module_name || !module_description) {
       return true;
     } else {
       return false;
@@ -89,11 +88,11 @@ const CreateModule = ({ history }) => {
 
   const onSubmit = async () => {
     setloader({ ...loader, isLoading: true });
-    const { module_description, route_key, module_name } = moduleMaster;
+    const { module_description, module_name } = moduleMaster;
 
     const payload = {
       module_name: module_name?.trimEnd(),
-      route_key: route_key?.trimEnd(),
+      route_key: `${module_name?.trimEnd()}RouteKey`?.trimEnd(),
       module_description: module_description?.trimEnd(),
       id: moduleMaster?.id || undefined,
     };
@@ -102,7 +101,7 @@ const CreateModule = ({ history }) => {
       let url;
 
       if (moduleMaster?.id) {
-        url = `${config.baseUrl}/superAdmin/updateModuleMaster `;
+        url = `${config.baseUrl}/superAdmin/updateModuleMaster`;
         res = await putAuthorized(url, payload);
       } else {
         url = `${config.baseUrl}/superAdmin/addModuleMaster`;
@@ -137,7 +136,6 @@ const CreateModule = ({ history }) => {
       id: 0,
       module_description: "",
       module_name: "",
-      route_key: "",
     });
   };
   const edit = (dataForEdit: moduleMasterTypes) => {
@@ -145,7 +143,6 @@ const CreateModule = ({ history }) => {
       ...moduleMaster,
       module_description: dataForEdit?.moduleDescription,
       module_name: dataForEdit?.moduleName,
-      route_key: dataForEdit?.routeKey,
       id: dataForEdit?.id,
     });
   };
@@ -191,7 +188,7 @@ const CreateModule = ({ history }) => {
               />
             </FormControl>
           </Container>
-          <Container>
+          {/* <Container>
             <FormControl>
               <FormLabel>Module Route Key*</FormLabel>
               <Input
@@ -202,7 +199,7 @@ const CreateModule = ({ history }) => {
                 placeholder="Module Route Key"
               />
             </FormControl>
-          </Container>
+          </Container> */}
           <Container style={{ margin: "30px 10px" }}>
             <Button
               variant="contained"
