@@ -7,11 +7,12 @@ import TableRow from "@mui/material/TableRow";
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.primary.light,
-
+    padding: '16px', // Adjust padding as needed
     color: theme.palette.common.white,
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
+    padding: '8px', // Adjust padding as needed
   },
 }));
 

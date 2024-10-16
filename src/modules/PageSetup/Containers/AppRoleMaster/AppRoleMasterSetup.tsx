@@ -35,17 +35,30 @@ const AppRoleMasterSetup = ({ history }) => {
     app_name: { appName: "", id: 0, appId: "" },
     app_type: { name: "", value: "" },
     app_id: "",
+    rank: { rankDescription: "" },
     role_name: { roleName: "", id: 0 },
     role_id: "",
     id: 0,
   });
+  const [rankData, setRankData] = useState([])
+
+  const getRankData = async () => {
+    let url = `${config.baseUrl}/superAdmin/userRanks`
+    try {
+      const resp = await getAuthorized(url)
+      setRankData(resp?.data?.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const getAppMasterList = async () => {
     let url = `${config.baseUrl}/superAdmin/appMasters`;
 
     try {
       const { data } = await getAuthorized(url);
       setAppMasterList(data?.data);
-    } catch (error) {}
+    } catch (error) { }
   };
   const getRolesList = async () => {
     let url = `${config.baseUrl}/superAdmin/roleMasters`;
@@ -53,7 +66,7 @@ const AppRoleMasterSetup = ({ history }) => {
     try {
       const { data } = await getAuthorized(url);
       setRolesList(data?.data);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const getAppRoleMaster = async () => {
@@ -62,7 +75,7 @@ const AppRoleMasterSetup = ({ history }) => {
     try {
       const { data } = await getAuthorized(url);
       setAppRoleMasterList(data?.data);
-    } catch (error) {}
+    } catch (error) { }
   };
   const deleteItem = async (id: number) => {
     setloader({ ...loader, isLoading: true });
@@ -185,14 +198,14 @@ const AppRoleMasterSetup = ({ history }) => {
     getRolesList();
     getAppMasterList();
     getAppRoleMaster();
+    getRankData()
   }, []);
-
+  console.log(appRoleMaster)
   return (
     <>
-      <FlexDiv justifyContentCenter>
-        <H2Heading>Create App Role Master</H2Heading>
+      <FlexDiv justifyContentCenter style={{ marginTop: "1rem" }}>
+        <div style={{ fontSize: "1.3rem", color: "#f65000" }}>Create App Role Master</div>
       </FlexDiv>
-
       <FlexDiv justifyContentCenter>
         <FlexDiv justifyContentSpaceEvenly>
           <Container>
@@ -219,7 +232,6 @@ const AppRoleMasterSetup = ({ history }) => {
               />
             </FormControl>
           </Container>
-
           <Container>
             <FormControl>
               <FormLabel>Role Name*</FormLabel>
@@ -228,6 +240,17 @@ const AppRoleMasterSetup = ({ history }) => {
                 onChange={(e, value) => onChange({ name: "role_name", value })}
                 options={rolesList}
                 getOptionLabel={(option: any) => option?.roleName}
+              />
+            </FormControl>
+          </Container>
+          <Container>
+            <FormControl>
+              <FormLabel>Select Rank</FormLabel>
+              <Autocomplete
+                value={appRoleMaster?.rank}
+                onChange={(e, value) => onChange({ name: "rank", value })}
+                options={rankData}
+                getOptionLabel={(option: any) => option?.rankDescription}
               />
             </FormControl>
           </Container>

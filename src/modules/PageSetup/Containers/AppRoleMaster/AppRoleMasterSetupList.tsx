@@ -63,7 +63,7 @@ const AppRoleMasterSetupList = ({ appRoleMasterList, edit, deleteItem }) => {
                         <StyledTableCell align="center">
                           <FlexDiv justifyContentSpaceEvenly>
                             <IconButton onClick={() => edit(row)}>
-                              <FaEdit />
+                              <FaEdit style={{ fontSize: "1rem" }} />
                             </IconButton>
                             <IconButton
                               onClick={() =>
@@ -74,7 +74,7 @@ const AppRoleMasterSetupList = ({ appRoleMasterList, edit, deleteItem }) => {
                                 })
                               }
                             >
-                              <FaTrash />
+                              <FaTrash style={{ fontSize: "1rem" }} />
                             </IconButton>
                           </FlexDiv>
                         </StyledTableCell>

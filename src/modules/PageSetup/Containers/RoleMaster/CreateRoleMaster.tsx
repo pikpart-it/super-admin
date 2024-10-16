@@ -15,6 +15,7 @@ import MsgCard from "../../../../components/MsgCard";
 import RoleMasterList, { roleTypes } from "./RoleMasterList";
 import { Autocomplete, FormControl, FormLabel, Input } from "@mui/joy";
 import { enableSubmit } from "../../../../utility/func";
+import { ProductWrapper } from "../../../ProductManufacturer/Businessunits/component/AddBUForm";
 export const Container = styled.div`
   width: 25%;
   margin: 10px;
@@ -38,7 +39,7 @@ const CreateRoleMaster = () => {
     try {
       const { data } = await getAuthorized(url);
       setRolesList(data?.data);
-    } catch (error) {}
+    } catch (error) { }
   };
   const deleteItem = async (id: number) => {
     setloader({ ...loader, isLoading: true });
@@ -126,50 +127,52 @@ const CreateRoleMaster = () => {
   }, []);
   return (
     <>
-      <FlexDiv justifyContentCenter>
-        <H2Heading>Role Master</H2Heading>
+      <FlexDiv justifyContentCenter style={{ marginTop: "1rem" }}>
+        <div style={{ fontSize: "1.3rem", color: "#f65000" }}>Role Master</div>
       </FlexDiv>
+      <ProductWrapper style={{ background: "#fbfbfb", padding: "10px", width: "90%", margin: "auto", marginTop: "1rem" }}>
+        <FlexDiv justifyContentCenter>
+          <FlexDiv justifyContentSpaceBetween width="50%">
+            <Container style={{ width: "30%" }}>
+              <FormControl>
+                <FormLabel>Role Name*</FormLabel>
+              </FormControl>
 
-      <FlexDiv justifyContentCenter>
-        <FlexDiv justifyContentSpaceBetween width="50%">
-          <Container style={{ width: "30%" }}>
-            <FormControl>
-              <FormLabel>Role Name*</FormLabel>
-            </FormControl>
-
-            <Autocomplete
-              inputValue={roleData.role_name}
-              options={rolesList}
-              getOptionLabel={(option: any) => option?.roleName}
-              freeSolo={true}
-              onInputChange={(e, value) =>
-                onChange({ name: "role_name", value })
-              }
-            />
-          </Container>
-          <Container style={{ width: "30%" }}>
-            <FormControl>
-              <FormLabel>Role Description*</FormLabel>
-            </FormControl>
-            <Input
-              name="role_description"
-              type="text"
-              value={roleData.role_description}
-              onChange={({ target }) => onChange(target)}
-            />
-          </Container>
-          <Container style={{ margin: "30px 0px", width: "10%" }}>
-            <Button
-              variant="contained"
-              color="success"
-              onClick={onSubmit}
-              disabled={submitEnabled}
-            >
-              Submit
-            </Button>
-          </Container>
+              <Autocomplete
+                inputValue={roleData.role_name}
+                options={rolesList}
+                getOptionLabel={(option: any) => option?.roleName}
+                freeSolo={true}
+                onInputChange={(e, value) =>
+                  onChange({ name: "role_name", value })
+                }
+              />
+            </Container>
+            <Container style={{ width: "30%" }}>
+              <FormControl>
+                <FormLabel>Role Description*</FormLabel>
+              </FormControl>
+              <Input
+                name="role_description"
+                type="text"
+                value={roleData.role_description}
+                onChange={({ target }) => onChange(target)}
+              />
+            </Container>
+            <Container style={{ margin: "30px 0px", width: "10%" }}>
+              <Button
+                variant="contained"
+                color="success"
+                onClick={onSubmit}
+                disabled={submitEnabled}
+              >
+                Submit
+              </Button>
+            </Container>
+          </FlexDiv>
         </FlexDiv>
-      </FlexDiv>
+      </ProductWrapper>
+
 
       <RoleMasterList
         rolesList={rolesList}

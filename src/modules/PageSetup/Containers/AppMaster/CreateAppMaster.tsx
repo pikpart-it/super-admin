@@ -15,6 +15,7 @@ import ListAppMaster, { appMasterTypes } from "./ListAppMaster";
 import { Container } from "../RoleMaster/CreateRoleMaster";
 import { Autocomplete, FormControl, FormLabel, Input } from "@mui/joy";
 import { enableSubmit } from "../../../../utility/func";
+import { ProductWrapper } from "../../../ProductManufacturer/Businessunits/component/AddBUForm";
 
 export const appTypes = [
   { name: "Mobile", value: "mobile" },
@@ -36,6 +37,17 @@ const CreateAppMaster = () => {
     is_stop_prev_version: false,
     id: 0,
   });
+  const [rankData, setRankData] = useState([])
+
+  const getRankData = async () => {
+    let url = `${config.baseUrl}/superAdmin/userRanks`
+    try {
+      const resp = await getAuthorized(url)
+      setRankData(resp?.data?.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const getAppMasterList = async () => {
     let url = `${config.baseUrl}/superAdmin/appMasters`;
@@ -43,7 +55,7 @@ const CreateAppMaster = () => {
     try {
       const { data } = await getAuthorized(url);
       setAppMasterList(data?.data);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const deleteItem = async (id: number) => {
@@ -164,16 +176,16 @@ const CreateAppMaster = () => {
   };
   useEffect(() => {
     getAppMasterList();
+    getRankData()
   }, []);
 
   return (
     <>
-      <FlexDiv justifyContentCenter>
-        <H2Heading>App Master</H2Heading>
+      <FlexDiv justifyContentCenter style={{ marginTop: "1rem" }}>
+        <div style={{ fontSize: "1.3rem", color: "#f65000" }}>App Master</div>
       </FlexDiv>
-
-      <FlexDiv justifyContentCenter>
-        <FlexDiv justifyContentSpaceEvenly>
+      <ProductWrapper style={{ background: "#fbfbfb", padding: "20px" }}>
+        <FlexDiv justifyContentSpaceBetween wrap style={{ width: "90%", margin: 'auto' }}>
           <Container>
             <FormControl>
               <FormLabel>App Type*</FormLabel>
@@ -199,7 +211,6 @@ const CreateAppMaster = () => {
               />
             </FormControl>
           </Container>
-
           <Container>
             <FormControl>
               <FormLabel>App Version*</FormLabel>
@@ -224,6 +235,11 @@ const CreateAppMaster = () => {
               />
             </FormControl>
           </Container>
+          <Container>
+            <FormControl>
+              <FormLabel>Select Rank</FormLabel>
+            </FormControl>
+          </Container>
           <Container style={{ minWidth: "fit-content", margin: "auto 0px" }}>
             <FormControlLabel
               value="top"
@@ -246,7 +262,8 @@ const CreateAppMaster = () => {
             </Button>
           </Container>
         </FlexDiv>
-      </FlexDiv>
+      </ProductWrapper>
+
 
       <ListAppMaster
         edit={edit}

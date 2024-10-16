@@ -17,11 +17,12 @@ export const sideBarWidth = window.innerWidth < 540 ? "0px" : "50px";
 export const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: '"#42a5f5"',
-
     color: "#fff",
+    padding: '16px', // Adjust padding as needed
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
+    padding: '8px', // Adjust padding as needed
   },
 }));
 
