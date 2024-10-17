@@ -37,17 +37,7 @@ const CreateAppMaster = () => {
     is_stop_prev_version: false,
     id: 0,
   });
-  const [rankData, setRankData] = useState([])
 
-  const getRankData = async () => {
-    let url = `${config.baseUrl}/superAdmin/userRanks`
-    try {
-      const resp = await getAuthorized(url)
-      setRankData(resp?.data?.data)
-    } catch (error) {
-      console.log(error)
-    }
-  }
 
   const getAppMasterList = async () => {
     let url = `${config.baseUrl}/superAdmin/appMasters`;
@@ -176,7 +166,6 @@ const CreateAppMaster = () => {
   };
   useEffect(() => {
     getAppMasterList();
-    getRankData()
   }, []);
 
   return (
@@ -233,11 +222,6 @@ const CreateAppMaster = () => {
                 value={appMaster.app_id}
                 onChange={({ target }) => onChange(target)}
               />
-            </FormControl>
-          </Container>
-          <Container>
-            <FormControl>
-              <FormLabel>Select Rank</FormLabel>
             </FormControl>
           </Container>
           <Container style={{ minWidth: "fit-content", margin: "auto 0px" }}>

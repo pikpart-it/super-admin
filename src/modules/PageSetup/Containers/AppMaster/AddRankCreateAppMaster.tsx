@@ -62,12 +62,15 @@ const AddRankCreateAppMaster = () => {
         })
         setEditedRankId(data?.id)
     }
-    const onEdit = async () => {
-        let url = `${config.baseUrl}/superAdmin/updateUserRank`
+    const onEdit = () => {
+        onEditRankCode()
+        onEditRankDescription()
+    }
+    const onEditRankDescription = async () => {
+        let url = `${config.baseUrl}/superAdmin/updateRankDesc`
         const body = {
             id: editedRankId,
-            rank_code: data?.rankCode,
-            rank_description: data?.rankDescription
+            rank_description: data?.rankDescription,
         }
         try {
             const resp = await putAuthorized(url, body)
@@ -77,6 +80,29 @@ const AddRankCreateAppMaster = () => {
                     rankCode: "",
                     rankDescription: ""
                 })
+                setIsEdit(false)
+                getRankData()
+            }
+        } catch (error) {
+            console.log(error)
+        }
+
+    }
+    const onEditRankCode = async () => {
+        let url = `${config.baseUrl}/superAdmin/updateUserRank`
+        const body = {
+            id: editedRankId,
+            rank_code: data?.rankCode,
+        }
+        try {
+            const resp = await putAuthorized(url, body)
+            if (resp?.status === 200) {
+                setloader({ ...loader, isLoading: false })
+                setData({
+                    rankCode: "",
+                    rankDescription: ""
+                })
+                setIsEdit(false)
                 getRankData()
             }
         } catch (error) {
@@ -105,7 +131,7 @@ const AddRankCreateAppMaster = () => {
     return (
         <div style={{ width: "90%", margin: "auto" }}>
             <FlexDiv justifyContentCenter style={{ marginTop: "1rem" }}>
-                <div style={{ fontSize: "1.3rem", color: "#f65000" }}>Add Rank</div>
+                <div style={{ fontSize: "1.3rem", color: "#f65000" }}>{isEdit ? "Edit" : "Add"} Rank</div>
             </FlexDiv>
             <ProductWrapper style={{ background: "#fbfbfb", padding: "40px" }}>
                 <FlexDiv justifyContentSpaceBetween style={{ width: "60%", margin: 'auto' }}>

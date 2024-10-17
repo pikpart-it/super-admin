@@ -35,12 +35,12 @@ const AppRoleMasterSetup = ({ history }) => {
     app_name: { appName: "", id: 0, appId: "" },
     app_type: { name: "", value: "" },
     app_id: "",
-    rank: { rankDescription: "" },
+    rank: { id: 0, rankCode: "", rankDescription: "" },
     role_name: { roleName: "", id: 0 },
     role_id: "",
     id: 0,
   });
-  const [rankData, setRankData] = useState([])
+  const [rankData, setRankData] = useState<any>([])
 
   const getRankData = async () => {
     let url = `${config.baseUrl}/superAdmin/userRanks`
@@ -126,6 +126,7 @@ const AppRoleMasterSetup = ({ history }) => {
       app_type: { name: "", value: "" },
       role_name: { id: 0, roleName: "" },
       id: 0,
+      rank: { id: 0, rankCode: "", rankDescription: "" },
     });
   };
 
@@ -141,12 +142,13 @@ const AppRoleMasterSetup = ({ history }) => {
     setloader({ ...loader, isLoading: true });
 
     const payload = {
-      ...appRoleMaster,
       role_name: appRoleMaster?.role_name?.roleName,
       role_id: appRoleMaster?.role_name?.id,
       app_name: appRoleMaster?.app_name?.appId,
       app_id: appRoleMaster?.app_name?.id,
       app_type: undefined,
+      rank_code: appRoleMaster?.rank?.rankCode,
+      rank_id: appRoleMaster?.rank?.id,
       id: appRoleMaster?.id || undefined,
     };
     try {
@@ -185,12 +187,14 @@ const AppRoleMasterSetup = ({ history }) => {
   };
 
   const edit = (dataForEdit: appRoleMasterSetupTypes) => {
+    console.log(dataForEdit)
     setAppRoleMaster({
       ...appRoleMaster,
       id: dataForEdit?.id,
       app_name: appMasterList?.find((i) => i?.id === dataForEdit?.appId)!,
       role_name: rolesList?.find((i) => i?.roleName === dataForEdit?.roleName)!,
       app_type: appTypes?.find((i) => i?.value === dataForEdit?.appType)!,
+      rank: rankData?.find((i) => i?.rankCode === dataForEdit?.rankCode)
     });
   };
 
@@ -250,7 +254,7 @@ const AppRoleMasterSetup = ({ history }) => {
                 value={appRoleMaster?.rank}
                 onChange={(e, value) => onChange({ name: "rank", value })}
                 options={rankData}
-                getOptionLabel={(option: any) => option?.rankDescription}
+                getOptionLabel={(option: any) => option?.rankCode}
               />
             </FormControl>
           </Container>

@@ -18,7 +18,7 @@ import {
 import { RoutesPath } from "../../../../config/routes.config";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import ModalConfirmation from "../../../ProductManufacturer/OrderManagement/component/ModalConfirmation";
-const headers = ["Id", "App Name", "App Id", "Role Name", "Actions"];
+const headers = ["Id", "App Name", "App Id", "Role Name", "RankCode", "Actions"];
 export type appRoleMasterSetupTypes = {
   appName: any;
   appType: string;
@@ -27,6 +27,7 @@ export type appRoleMasterSetupTypes = {
   id: number;
   roleId: number;
   appId: any;
+  rankCode: string;
 };
 const AppRoleMasterSetupList = ({ appRoleMasterList, edit, deleteItem }) => {
   const [removeModal, setRemoveModal] = useState<any>({
@@ -60,6 +61,7 @@ const AppRoleMasterSetupList = ({ appRoleMasterList, edit, deleteItem }) => {
                         <StyledTableCell align="center">
                           {row?.roleName}
                         </StyledTableCell>
+                        <StyledTableCell align="center">{row?.rankCode}</StyledTableCell>
                         <StyledTableCell align="center">
                           <FlexDiv justifyContentSpaceEvenly>
                             <IconButton onClick={() => edit(row)}>
