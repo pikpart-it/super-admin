@@ -23,6 +23,7 @@ import Header from "../../../../components/ListsHeader";
 import MsgCard from "../../../../components/MsgCard";
 import { Loader } from "../../../../components/Loader";
 import ModalConfirmation from "../../../ProductManufacturer/OrderManagement/component/ModalConfirmation";
+import { ProductWrapper } from "../../../ProductManufacturer/Businessunits/component/AddBUForm";
 
 const headers = [
   "Module Name",
@@ -59,7 +60,7 @@ const ListMasterConfiguration = () => {
     try {
       const { data } = await getAuthorized(url);
       setAppMasterList(data?.data);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const getAppRoleMaster = async () => {
@@ -68,7 +69,7 @@ const ListMasterConfiguration = () => {
     try {
       const { data } = await getAuthorized(url);
       setAppRoleMasterList(data?.data);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const getConfigList = async () => {
@@ -77,7 +78,7 @@ const ListMasterConfiguration = () => {
     try {
       const { data } = await getAuthorized(url);
       setMasterConfigList(data?.data);
-    } catch (error) {}
+    } catch (error) { }
   };
   const deleteItem = async (id: number) => {
     setloader({ ...loader, isLoading: true });
@@ -120,12 +121,12 @@ const ListMasterConfiguration = () => {
   }, []);
 
   return (
-    <>
-      <FlexDiv justifyContentCenter>
-        <H2Heading>Master Configuration List</H2Heading>
+    <div style={{ width: "90%", margin: "auto" }}>
+      <FlexDiv justifyContentCenter style={{ marginTop: "1rem" }}>
+        <div style={{ fontSize: "1.3rem", color: "#f65000" }}>Master Configuration list</div>
       </FlexDiv>
-      <FlexDiv justifyContentCenter>
-        <FlexDiv justifyContentSpaceEvenly width="70%">
+      <ProductWrapper style={{ background: "#fbfbfb", padding: "20px" }}>
+        <FlexDiv justifyContentCenter width="100%">
           <Container>
             <FormControl>
               <FormLabel>App Name*</FormLabel>
@@ -137,9 +138,6 @@ const ListMasterConfiguration = () => {
               />
             </FormControl>
           </Container>
-          <div style={{ margin: "3% 0px 0px 0px" }}>
-            <FaArrowRight />
-          </div>
           <Container>
             <FormControl>
               <FormLabel>Role Name*</FormLabel>
@@ -155,7 +153,9 @@ const ListMasterConfiguration = () => {
             </FormControl>
           </Container>
         </FlexDiv>
-      </FlexDiv>
+
+      </ProductWrapper>
+
 
       {masterConfigList?.length > 0 ? (
         <FlexDiv width="100%" justifyContentCenter style={{ margin: "20px" }}>
@@ -235,7 +235,7 @@ const ListMasterConfiguration = () => {
         header="Remove Item"
         body="Are you sure to delete This Configuration?"
       />
-    </>
+    </div>
   );
 };
 

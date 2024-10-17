@@ -19,6 +19,7 @@ import MsgCard from "../../../../components/MsgCard";
 import { appMasterTypes } from "../AppMaster/ListAppMaster";
 import { Autocomplete, FormControl, FormLabel } from "@mui/joy";
 import { appTypes } from "../AppMaster/CreateAppMaster";
+import { ProductWrapper } from "../../../ProductManufacturer/Businessunits/component/AddBUForm";
 
 const AppRoleMasterSetup = ({ history }) => {
   const [loader, setloader] = useState({
@@ -206,12 +207,13 @@ const AppRoleMasterSetup = ({ history }) => {
   }, []);
   console.log(appRoleMaster)
   return (
-    <>
+    <div style={{ width: "90%", margin: "auto" }}>
       <FlexDiv justifyContentCenter style={{ marginTop: "1rem" }}>
         <div style={{ fontSize: "1.3rem", color: "#f65000" }}>Create App Role Master</div>
       </FlexDiv>
-      <FlexDiv justifyContentCenter>
-        <FlexDiv justifyContentSpaceEvenly>
+
+      <ProductWrapper style={{ background: "#fbfbfb", padding: "20px" }}>
+        <FlexDiv justifyContentSpaceBetween wrap>
           <Container>
             <FormControl>
               <FormLabel>App Type*</FormLabel>
@@ -269,7 +271,9 @@ const AppRoleMasterSetup = ({ history }) => {
             </Button>
           </Container>
         </FlexDiv>
-      </FlexDiv>
+
+      </ProductWrapper>
+
       <AppRoleMasterSetupList
         appRoleMasterList={appRoleMasterList}
         edit={edit}
@@ -287,7 +291,7 @@ const AppRoleMasterSetup = ({ history }) => {
         ghost
         card
       />
-    </>
+    </div>
   );
 };
 

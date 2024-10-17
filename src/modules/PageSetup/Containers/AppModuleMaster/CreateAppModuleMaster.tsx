@@ -19,6 +19,7 @@ import ListAppModuleMaster, {
 import { moduleMasterTypes } from "../ModuleMaster/ListModules";
 import { Autocomplete, FormControl, FormLabel } from "@mui/joy";
 import { appTypes } from "../AppMaster/CreateAppMaster";
+import { ProductWrapper } from "../../../ProductManufacturer/Businessunits/component/AddBUForm";
 
 const CreateAppModuleMaster = ({ history }) => {
   const [appModuleMasterList, setAppModuleMasterList] = useState<
@@ -46,7 +47,7 @@ const CreateAppModuleMaster = ({ history }) => {
     try {
       const { data } = await getAuthorized(url);
       setAppModuleMasterList(data?.data);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const deleteItem = async (id: number) => {
@@ -86,7 +87,7 @@ const CreateAppModuleMaster = ({ history }) => {
     try {
       const { data } = await getAuthorized(url);
       setModuleMasterList(data?.data);
-    } catch (error) {}
+    } catch (error) { }
   };
   const getAppMasterList = async () => {
     let url = `${config.baseUrl}/superAdmin/appMasters`;
@@ -94,7 +95,7 @@ const CreateAppModuleMaster = ({ history }) => {
     try {
       const { data } = await getAuthorized(url);
       setAppMasterList(data?.data);
-    } catch (error) {}
+    } catch (error) { }
   };
   const onChange = (target) => {
     const { name, value } = target;
@@ -193,12 +194,12 @@ const CreateAppModuleMaster = ({ history }) => {
   }, []);
 
   return (
-    <>
-      <FlexDiv justifyContentCenter>
-        <H2Heading>App Module Master</H2Heading>
+    <div style={{ width: "90%", margin: "auto" }}>
+      <FlexDiv justifyContentCenter style={{ marginTop: "1rem" }}>
+        <div style={{ fontSize: "1.3rem", color: "#f65000" }}>App Module Master</div>
       </FlexDiv>
 
-      <FlexDiv justifyContentCenter>
+      <ProductWrapper style={{ background: "#fbfbfb", padding: "20px" }}>
         <FlexDiv justifyContentSpaceEvenly>
           <Container>
             <FormControl>
@@ -249,7 +250,8 @@ const CreateAppModuleMaster = ({ history }) => {
             </Button>
           </Container>
         </FlexDiv>
-      </FlexDiv>
+      </ProductWrapper>
+
       <ListAppModuleMaster
         appModuleMasterList={appModuleMasterList}
         deleteItem={deleteItem}
@@ -267,7 +269,7 @@ const CreateAppModuleMaster = ({ history }) => {
         ghost
         card
       />
-    </>
+    </div>
   );
 };
 

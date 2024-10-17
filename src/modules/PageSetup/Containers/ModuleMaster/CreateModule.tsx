@@ -15,6 +15,7 @@ import { Container } from "../RoleMaster/CreateRoleMaster";
 import ListModules, { moduleMasterTypes } from "./ListModules";
 import { Autocomplete, FormControl, FormLabel, Input } from "@mui/joy";
 import { enableSubmit } from "../../../../utility/func";
+import { ProductWrapper } from "../../../ProductManufacturer/Businessunits/component/AddBUForm";
 
 const CreateModule = ({ history }) => {
   const [moduleMasterList, setModuleMasterList] = useState<moduleMasterTypes[]>(
@@ -36,7 +37,7 @@ const CreateModule = ({ history }) => {
     try {
       const { data } = await getAuthorized(url);
       setModuleMasterList(data?.data);
-    } catch (error) {}
+    } catch (error) { }
   };
   const deleteItem = async (id: number) => {
     setloader({ ...loader, isLoading: true });
@@ -152,13 +153,12 @@ const CreateModule = ({ history }) => {
   }, []);
 
   return (
-    <>
-      <FlexDiv justifyContentCenter>
-        <H2Heading>Create Master Module</H2Heading>
+    <div style={{ width: "90%", margin: 'auto' }}>
+      <FlexDiv justifyContentCenter style={{ marginTop: "1rem" }}>
+        <div style={{ fontSize: "1.3rem", color: "#f65000" }}>Create Master Module</div>
       </FlexDiv>
-
-      <FlexDiv justifyContentCenter>
-        <FlexDiv justifyContentSpaceEvenly>
+      <ProductWrapper style={{ background: "#fbfbfb", padding: "20px" }}>
+        <FlexDiv justifyContentCenter>
           <Container>
             <FormControl>
               <FormLabel>Module Name*</FormLabel>
@@ -211,7 +211,7 @@ const CreateModule = ({ history }) => {
             </Button>
           </Container>
         </FlexDiv>
-      </FlexDiv>
+      </ProductWrapper>
       <ListModules
         deleteItem={deleteItem}
         edit={edit}
@@ -229,7 +229,7 @@ const CreateModule = ({ history }) => {
         ghost
         card
       />
-    </>
+    </div>
   );
 };
 

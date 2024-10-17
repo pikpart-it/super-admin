@@ -10,11 +10,9 @@ import { FaEye } from "react-icons/fa";
 import { Button } from "@mui/material";
 import { Loader } from "../../components/Loader";
 import MsgCard from "../../components/MsgCard";
+import { ProductWrapper } from "../ProductManufacturer/Businessunits/component/AddBUForm";
 
 const RegisterDiv = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
   width: 80%;
   margin: auto;
 `;
@@ -52,7 +50,7 @@ const CreateSalesAdmin = ({ history }) => {
     try {
       const { data } = await getAuthorized(url);
       setRoles(data?.data);
-    } catch (error) {}
+    } catch (error) { }
   };
   const onSubmit = async () => {
     setLoader({ ...loader, isLoading: true });
@@ -96,119 +94,119 @@ const CreateSalesAdmin = ({ history }) => {
     getRoles();
   }, []);
   return (
-    <div>
-      <FlexDiv justifyContentCenter>
-        <H2Heading>Register Sale Admin Users</H2Heading>
+    <div style={{ width: "90%", margin: "auto" }}>
+      <FlexDiv justifyContentCenter style={{ marginTop: "1rem" }}>
+        <div style={{ fontSize: "1.3rem", color: "#f65000" }}>Register Sales Admin</div>
       </FlexDiv>
 
-      <RegisterDiv>
-        <Box>
-          <FlexDiv column alignItemsCenter margin="auto" wrap width="100%">
-            <Div>
+      <ProductWrapper style={{ background: "#fbfbfb", padding: "20px" }}>
+
+        <FlexDiv alignItemsCenter margin="auto" wrap width="100%" justifyContentSpaceBetween>
+          <Div>
+            <FormInput
+              type="text"
+              name="first_name"
+              value={customerData?.first_name}
+              onChange={(target) => onChange(target)}
+              fieldErrors={{}}
+              label="First Name *"
+            />
+          </Div>
+
+          <Div>
+            <FormInput
+              type="text"
+              name="last_name"
+              value={customerData?.last_name}
+              onChange={(target) => onChange(target)}
+              fieldErrors={{}}
+              label="Last Name *"
+            />
+          </Div>
+          <Div>
+            <MyFormSelect
+              list={[]}
+              options={roles}
+              name="role_type"
+              value={customerData?.role_type}
+              onChange={(target) => onChange(target)}
+              fieldErrors={{}}
+              label="Role Type *"
+            />
+          </Div>
+
+          <Div>
+            <FormInput
+              type="text"
+              name="email"
+              value={customerData?.email}
+              onChange={(target) => onChange(target)}
+              fieldErrors={{}}
+              label="Email *"
+            />
+            {customerData?.email?.length > 0 &&
+              !validateEmail(customerData?.email) && (
+                <p style={{ color: "red", textAlign: "center" }}>
+                  Invalid Email!!
+                </p>
+              )}
+          </Div>
+
+          <Div>
+            <FormInput
+              type="text"
+              name="phone_number"
+              value={customerData?.phone_number}
+              onChange={(target) => onChange(target)}
+              fieldErrors={{}}
+              label="Phone Number *"
+              maxLength={10}
+            />
+            {customerData?.phone_number?.length > 0 &&
+              customerData?.phone_number?.length < 10 && (
+                <p style={{ color: "red", textAlign: "center" }}>
+                  Invalid phone Number!!
+                </p>
+              )}
+          </Div>
+
+          <Div>
+            <FlexDiv justifyContentCenter width="100%">
               <FormInput
-                type="text"
-                name="first_name"
-                value={customerData?.first_name}
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={customerData?.password}
                 onChange={(target) => onChange(target)}
                 fieldErrors={{}}
-                label="First Name *"
+                label="Password *"
               />
-            </Div>
+              <div
+                style={{
+                  margin: "auto 5px",
+                  fontSize: "18px",
+                  cursor: "pointer",
+                }}
+                onClick={() => setShowPassowrd(!showPassword)}
+              >
+                <FaEye />
+              </div>
+            </FlexDiv>
+          </Div>
 
-            <Div>
-              <FormInput
-                type="text"
-                name="last_name"
-                value={customerData?.last_name}
-                onChange={(target) => onChange(target)}
-                fieldErrors={{}}
-                label="Last Name *"
-              />
-            </Div>
-            <Div>
-              <MyFormSelect
-                list={[]}
-                options={roles}
-                name="role_type"
-                value={customerData?.role_type}
-                onChange={(target) => onChange(target)}
-                fieldErrors={{}}
-                label="Role Type *"
-              />
-            </Div>
+          <Div>{null}</Div>
+        </FlexDiv>
+        <FlexDiv justifyContentFlexEnd width="80%">
+          <Button
+            variant="contained"
+            color="success"
+            onClick={onSubmit}
+            disabled={enabled}
+          >
+            Submit{" "}
+          </Button>
+        </FlexDiv>
+      </ProductWrapper>
 
-            <Div>
-              <FormInput
-                type="text"
-                name="email"
-                value={customerData?.email}
-                onChange={(target) => onChange(target)}
-                fieldErrors={{}}
-                label="Email *"
-              />
-              {customerData?.email?.length > 0 &&
-                !validateEmail(customerData?.email) && (
-                  <p style={{ color: "red", textAlign: "center" }}>
-                    Invalid Email!!
-                  </p>
-                )}
-            </Div>
-
-            <Div>
-              <FormInput
-                type="text"
-                name="phone_number"
-                value={customerData?.phone_number}
-                onChange={(target) => onChange(target)}
-                fieldErrors={{}}
-                label="Phone Number *"
-                maxLength={10}
-              />
-              {customerData?.phone_number?.length > 0 &&
-                customerData?.phone_number?.length < 10 && (
-                  <p style={{ color: "red", textAlign: "center" }}>
-                    Invalid phone Number!!
-                  </p>
-                )}
-            </Div>
-
-            <Div>
-              <FlexDiv justifyContentCenter width="100%">
-                <FormInput
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  value={customerData?.password}
-                  onChange={(target) => onChange(target)}
-                  fieldErrors={{}}
-                  label="Password *"
-                />
-                <div
-                  style={{
-                    margin: "auto 5px",
-                    fontSize: "18px",
-                    cursor: "pointer",
-                  }}
-                  onClick={() => setShowPassowrd(!showPassword)}
-                >
-                  <FaEye />
-                </div>
-              </FlexDiv>
-            </Div>
-
-            <Div>{null}</Div>
-          </FlexDiv>
-        </Box>
-      </RegisterDiv>
-      <FlexDiv justifyContentFlexEnd width="80%">
-        <Button
-          variant="contained"
-          color="success"
-          onClick={onSubmit}
-          disabled={enabled}
-        >
-          Submit{" "}
-        </Button>
-      </FlexDiv>
       <Loader variant="m" isLoading={loader.isLoading} />
       <MsgCard
         style={{

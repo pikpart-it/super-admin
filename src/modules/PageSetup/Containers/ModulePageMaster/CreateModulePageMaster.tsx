@@ -16,6 +16,7 @@ import { Container } from "../RoleMaster/CreateRoleMaster";
 import ListModulePageMaster, {
   modulePageMasterTypes,
 } from "./ListModulePageMaster";
+import { ProductWrapper } from "../../../ProductManufacturer/Businessunits/component/AddBUForm";
 
 const CreateModulePageMaster = () => {
   const [moduleMasterList, setModuleMasterList] = useState<moduleMasterTypes[]>(
@@ -44,7 +45,7 @@ const CreateModulePageMaster = () => {
     try {
       const { data } = await getAuthorized(url);
       setModulePageMasterList(data?.data);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const deleteItem = async (id: number) => {
@@ -84,7 +85,7 @@ const CreateModulePageMaster = () => {
     try {
       const { data } = await getAuthorized(url);
       setModuleMasterList(data?.data);
-    } catch (error) {}
+    } catch (error) { }
   };
   const onChange = (target) => {
     const { name, value } = target;
@@ -185,12 +186,11 @@ const CreateModulePageMaster = () => {
     getModuleMasterList();
   }, []);
   return (
-    <>
-      <FlexDiv justifyContentCenter>
-        <H2Heading>Module Page Master</H2Heading>
+    <div style={{ width: "90%", margin: "auto" }}>
+      <FlexDiv justifyContentCenter style={{ marginTop: "1rem" }}>
+        <div style={{ fontSize: "1.3rem", color: "#f65000" }}>Module Page Master</div>
       </FlexDiv>
-
-      <FlexDiv justifyContentCenter>
+      <ProductWrapper style={{ background: "#fbfbfb", padding: "20px" }}>
         <FlexDiv justifyContentSpaceEvenly>
           <Container>
             <FormControl>
@@ -243,7 +243,7 @@ const CreateModulePageMaster = () => {
             </Button>
           </Container>
         </FlexDiv>
-      </FlexDiv>
+      </ProductWrapper>
       <ListModulePageMaster
         deleteItem={deleteItem}
         edit={edit}
@@ -261,7 +261,7 @@ const CreateModulePageMaster = () => {
         ghost
         card
       />
-    </>
+    </div>
   );
 };
 

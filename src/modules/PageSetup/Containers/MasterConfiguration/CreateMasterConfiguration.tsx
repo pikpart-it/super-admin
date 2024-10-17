@@ -15,6 +15,7 @@ import { modulePageMasterTypes } from "../ModulePageMaster/ListModulePageMaster"
 import { Container } from "../RoleMaster/CreateRoleMaster";
 import ListMasterConfigurationTable from "./ListMasterConfigurationTable";
 import { appTypes } from "../AppMaster/CreateAppMaster";
+import { ProductWrapper } from "../../../ProductManufacturer/Businessunits/component/AddBUForm";
 
 const CreateMasterConfiguration = ({ history }) => {
   const [moduleMasterList, setModuleMasterList] = useState<
@@ -41,6 +42,7 @@ const CreateMasterConfiguration = ({ history }) => {
     app_name: { appName: "", id: 0, appId: "" },
     app_type: { name: "", value: "" },
     role_name: { roleName: "", id: 0, roleId: 0 },
+    rank: { id: 0, rankCode: "", rankDescription: "" },
     app_id: "",
     role_id: "",
     priviledge_type: "Create",
@@ -49,13 +51,24 @@ const CreateMasterConfiguration = ({ history }) => {
     is_active: true,
   });
 
+  const [rankData, setRankData] = useState<any>([])
+
+  const getRankData = async () => {
+    let url = `${config.baseUrl}/superAdmin/userRanks`
+    try {
+      const resp = await getAuthorized(url)
+      setRankData(resp?.data?.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
   const getModuleMasterList = async () => {
     let url = `${config.baseUrl}/superAdmin/appModuleMasters`;
 
     try {
       const { data } = await getAuthorized(url);
       setModuleMasterList(data?.data);
-    } catch (error) {}
+    } catch (error) { }
   };
   const getAppMasterList = async () => {
     let url = `${config.baseUrl}/superAdmin/appMasters`;
@@ -63,7 +76,7 @@ const CreateMasterConfiguration = ({ history }) => {
     try {
       const { data } = await getAuthorized(url);
       setAppMasterList(data?.data);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const getAppRoleMaster = async () => {
@@ -72,7 +85,7 @@ const CreateMasterConfiguration = ({ history }) => {
     try {
       const { data } = await getAuthorized(url);
       setAppRoleMasterList(data?.data);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const getPageMaster = async () => {
@@ -92,12 +105,14 @@ const CreateMasterConfiguration = ({ history }) => {
         (i) => i?.moduleId === masterConfiguration.module_name.moduleId
       );
       setModulePageMasterList(filtered);
-    } catch (error) {}
+    } catch (error) { }
   };
+
   const onChange = (target) => {
     const { name, value } = target;
     setMasterConfiguration({ ...masterConfiguration, [name]: value });
   };
+
   const perparePayload = () => {
     return modulePageMasterList
       ?.filter((i) => i?.checked)
@@ -115,9 +130,12 @@ const CreateMasterConfiguration = ({ history }) => {
         role_id: masterConfiguration?.role_name.roleId,
         is_active: masterConfiguration?.is_active,
         priviledge_type: masterConfiguration?.priviledge_type,
+        rank_code: masterConfiguration?.rank?.rankCode,
+        rank_id: masterConfiguration?.rank?.id,
       }));
   };
 
+  console.log(masterConfiguration)
   const onSubmit = async () => {
     setloader({ ...loader, isLoading: true });
     let url = `${config.baseUrl}/superAdmin/addUpdateMasterConfiguration`;
@@ -213,19 +231,20 @@ const CreateMasterConfiguration = ({ history }) => {
     getModuleMasterList();
     getAppRoleMaster();
     getAppMasterList();
+    getRankData()
   }, []);
 
   useEffect(() => {
     getPageMaster();
   }, [masterConfiguration?.module_name?.moduleId]);
   return (
-    <>
-      <FlexDiv justifyContentCenter>
-        <H2Heading>Master Configuration</H2Heading>
+    <div style={{ width: "90%", margin: "auto" }}>
+      <FlexDiv justifyContentCenter style={{ marginTop: "1rem" }}>
+        <div style={{ fontSize: "1.3rem", color: "#f65000" }}>Master Configuration</div>
       </FlexDiv>
 
-      <FlexDiv justifyContentCenter>
-        <FlexDiv justifyContentSpaceEvenly width="90%">
+      <ProductWrapper style={{ background: "#fbfbfb", padding: "20px" }}>
+        <FlexDiv justifyContentSpaceBetween width="90%" wrap>
           <Container style={{ width: "20%" }}>
             <FormControl>
               <FormLabel>App Type*</FormLabel>
@@ -237,9 +256,7 @@ const CreateMasterConfiguration = ({ history }) => {
               />
             </FormControl>
           </Container>
-          <div style={{ margin: "3% 0px 0px 0px" }}>
-            <FaArrowRight />
-          </div>
+
           <Container style={{ width: "20%" }}>
             <FormControl>
               <FormLabel>App Name*</FormLabel>
@@ -253,9 +270,7 @@ const CreateMasterConfiguration = ({ history }) => {
               />
             </FormControl>
           </Container>
-          <div style={{ margin: "3% 0px 0px 0px" }}>
-            <FaArrowRight />
-          </div>
+
           <Container style={{ width: "20%" }}>
             <FormControl>
               <FormLabel>Role Name*</FormLabel>
@@ -270,10 +285,18 @@ const CreateMasterConfiguration = ({ history }) => {
               />
             </FormControl>
           </Container>
-          <div style={{ margin: "3% 0px 0px 0px" }}>
-            <FaArrowRight />
-          </div>
           <Container style={{ width: "20%" }}>
+            <FormControl>
+              <FormLabel>Select Rank</FormLabel>
+              <Autocomplete
+                value={masterConfiguration?.rank}
+                onChange={(e, value) => onChange({ name: "rank", value })}
+                options={rankData}
+                getOptionLabel={(option: any) => option?.rankCode}
+              />
+            </FormControl>
+          </Container>
+          <Container style={{ display: "flex", alignItems: "center", width: "20%" }}>
             <FormControl>
               <FormLabel>Module Name*</FormLabel>
 
@@ -288,20 +311,22 @@ const CreateMasterConfiguration = ({ history }) => {
                 getOptionLabel={(option: any) => option?.moduleName}
               />
             </FormControl>
+
+            <Button variant="contained" color="success" onClick={onSubmit} style={{ marginLeft: "10px", marginTop: "20px", }}>
+              Submit
+            </Button>
           </Container>
         </FlexDiv>
-      </FlexDiv>
+      </ProductWrapper>
+
+
       {masterConfiguration?.module_name?.moduleId && (
         <ListMasterConfigurationTable
           onPageSelect={onPageSelect}
           modulePageMasterList={modulePageMasterList}
         />
       )}
-      <FlexDiv justifyContentFlexEnd width="80%" margin="8% 0px 0px 0px">
-        <Button variant="contained" color="success" onClick={onSubmit}>
-          Submit
-        </Button>
-      </FlexDiv>
+
       <Loader variant="m" isLoading={loader.isLoading} />
       <MsgCard
         style={{
@@ -314,7 +339,7 @@ const CreateMasterConfiguration = ({ history }) => {
         ghost
         card
       />
-    </>
+    </div>
   );
 };
 

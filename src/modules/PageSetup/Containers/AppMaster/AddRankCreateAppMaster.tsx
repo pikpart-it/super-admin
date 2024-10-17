@@ -133,7 +133,7 @@ const AddRankCreateAppMaster = () => {
             <FlexDiv justifyContentCenter style={{ marginTop: "1rem" }}>
                 <div style={{ fontSize: "1.3rem", color: "#f65000" }}>{isEdit ? "Edit" : "Add"} Rank</div>
             </FlexDiv>
-            <ProductWrapper style={{ background: "#fbfbfb", padding: "40px" }}>
+            <ProductWrapper style={{ background: "#fbfbfb", padding: "20px" }}>
                 <FlexDiv justifyContentSpaceBetween style={{ width: "60%", margin: 'auto' }}>
                     <Input
                         placeholder='Rank Code'
