@@ -51,17 +51,12 @@ const CreateMasterConfiguration = ({ history }) => {
     is_active: true,
   });
 
-  const [rankData, setRankData] = useState<any>([])
+  const returnData = appRoleMasterList
+    ?.filter((i) => i?.appId === masterConfiguration?.app_name?.id)
 
-  const getRankData = async () => {
-    let url = `${config.baseUrl}/superAdmin/userRanks`
-    try {
-      const resp = await getAuthorized(url)
-      setRankData(resp?.data?.data)
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  const rankData = returnData?.filter((i) => {
+    return i?.roleName === masterConfiguration?.role_name?.roleName
+  })
   const getModuleMasterList = async () => {
     let url = `${config.baseUrl}/superAdmin/appModuleMasters`;
 
@@ -81,7 +76,6 @@ const CreateMasterConfiguration = ({ history }) => {
 
   const getAppRoleMaster = async () => {
     let url = `${config.baseUrl}/superAdmin/appRoleMasters`;
-
     try {
       const { data } = await getAuthorized(url);
       setAppRoleMasterList(data?.data);
@@ -231,7 +225,6 @@ const CreateMasterConfiguration = ({ history }) => {
     getModuleMasterList();
     getAppRoleMaster();
     getAppMasterList();
-    getRankData()
   }, []);
 
   useEffect(() => {
@@ -270,17 +263,17 @@ const CreateMasterConfiguration = ({ history }) => {
               />
             </FormControl>
           </Container>
-
           <Container style={{ width: "20%" }}>
             <FormControl>
               <FormLabel>Role Name*</FormLabel>
-
               <Autocomplete
                 value={masterConfiguration?.role_name}
                 onChange={(e, value) => onChange({ name: "role_name", value })}
-                options={appRoleMasterList?.filter(
-                  (i) => i?.appId === masterConfiguration?.app_name?.id
-                )}
+                options={appRoleMasterList
+                  ?.filter((i) => i?.appId === masterConfiguration?.app_name?.id) // Filter by appId
+                  ?.filter((value, index, self) => // Remove duplicate role names
+                    index === self.findIndex((t) => t.roleName === value.roleName)
+                  )}
                 getOptionLabel={(option: any) => option?.roleName}
               />
             </FormControl>
