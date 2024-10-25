@@ -53,7 +53,7 @@ const ListMasterConfiguration = () => {
     type: "confirm",
     id: "",
   });
-  const [selectedRankName, setSelectedRankName] = useState({ id: "", rankCode: "", rankDescription: "" })
+  const [selectedRankName, setSelectedRankName] = useState({ rankId: "", rankCode: "", })
 
   const getAppMasterList = async () => {
     let url = `${config.baseUrl}/superAdmin/appMasters`;
@@ -74,7 +74,7 @@ const ListMasterConfiguration = () => {
   };
 
   const getConfigList = async () => {
-    let url = `${config.baseUrl}/superAdmin/masterConfigurations?role_id=${selectedRole?.roleId}&rank_id=${selectedRankName?.id}`;
+    let url = `${config.baseUrl}/superAdmin/masterConfigurations?role_id=${selectedRole?.roleId}&rank_id=${selectedRankName?.rankId}`;
 
     try {
       const { data } = await getAuthorized(url);
@@ -119,7 +119,7 @@ const ListMasterConfiguration = () => {
   })
 
   useEffect(() => {
-    if (selectedRole?.id || selectedRankName?.id) {
+    if (selectedRole?.id || selectedRankName?.rankId) {
       getConfigList();
     }
   }, [selectedRole, selectedRankName]);
@@ -174,10 +174,8 @@ const ListMasterConfiguration = () => {
             </FormControl>
           </Container>
         </FlexDiv>
-
       </ProductWrapper>
-
-
+      
       {masterConfigList?.length > 0 ? (
         <FlexDiv width="100%" justifyContentCenter style={{ margin: "20px" }}>
           <TableContainer sx={{ width: "fit-content" }} component={Paper}>
