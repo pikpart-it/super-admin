@@ -129,7 +129,6 @@ const CreateMasterConfiguration = ({ history }) => {
       }));
   };
 
-  console.log(masterConfiguration)
   const onSubmit = async () => {
     setloader({ ...loader, isLoading: true });
     let url = `${config.baseUrl}/superAdmin/addUpdateMasterConfiguration`;
@@ -263,6 +262,25 @@ const CreateMasterConfiguration = ({ history }) => {
               />
             </FormControl>
           </Container>
+
+          <Container style={{ width: "20%" }}>
+            <FormControl>
+              <FormLabel>Module Name*</FormLabel>
+
+              <Autocomplete
+                value={masterConfiguration?.module_name}
+                onChange={(e, value) =>
+                  onChange({ name: "module_name", value })
+                }
+                options={moduleMasterList?.filter(
+                  (i) => i?.appId === masterConfiguration?.app_name?.id
+                )}
+                getOptionLabel={(option: any) => option?.moduleName}
+              />
+            </FormControl>
+          </Container>
+
+
           <Container style={{ width: "20%" }}>
             <FormControl>
               <FormLabel>Role Name*</FormLabel>
@@ -278,37 +296,25 @@ const CreateMasterConfiguration = ({ history }) => {
               />
             </FormControl>
           </Container>
-          <Container style={{ width: "20%" }}>
-            <FormControl>
-              <FormLabel>Select Rank</FormLabel>
-              <Autocomplete
-                value={masterConfiguration?.rank}
-                onChange={(e, value) => onChange({ name: "rank", value })}
-                options={rankData}
-                getOptionLabel={(option: any) => option?.rankCode}
-              />
-            </FormControl>
-          </Container>
-          <Container style={{ display: "flex", alignItems: "center", width: "20%" }}>
-            <FormControl>
-              <FormLabel>Module Name*</FormLabel>
 
-              <Autocomplete
-                value={masterConfiguration?.module_name}
-                onChange={(e, value) =>
-                  onChange({ name: "module_name", value })
-                }
-                options={moduleMasterList?.filter(
-                  (i) => i?.appId === masterConfiguration?.app_name?.id
-                )}
-                getOptionLabel={(option: any) => option?.moduleName}
-              />
-            </FormControl>
+          <FlexDiv style={{width:"100%"}} alignItemsCenter>
+            <Container>
+              <FormControl>
+                <FormLabel>Select Rank</FormLabel>
+                <Autocomplete
+                  value={masterConfiguration?.rank}
+                  onChange={(e, value) => onChange({ name: "rank", value })}
+                  options={rankData}
+                  getOptionLabel={(option: any) => option?.rankCode}
+                />
+              </FormControl>
 
+            </Container>
             <Button variant="contained" color="success" onClick={onSubmit} style={{ marginLeft: "10px", marginTop: "20px", }}>
               Submit
             </Button>
-          </Container>
+          </FlexDiv>
+
         </FlexDiv>
       </ProductWrapper>
 
