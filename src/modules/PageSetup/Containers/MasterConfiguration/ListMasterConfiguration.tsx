@@ -53,6 +53,7 @@ const ListMasterConfiguration = () => {
     type: "confirm",
     id: "",
   });
+  const [selectedRankName, setSelectedRankName] = useState({ rankId: "", rankCode: "", })
 
   const getAppMasterList = async () => {
     let url = `${config.baseUrl}/superAdmin/appMasters`;
@@ -73,13 +74,14 @@ const ListMasterConfiguration = () => {
   };
 
   const getConfigList = async () => {
-    let url = `${config.baseUrl}/superAdmin/masterConfigurations?role_id=${selectedRole?.roleId}`;
+    let url = `${config.baseUrl}/superAdmin/masterConfigurations?role_id=${selectedRole?.roleId}&rank_id=${selectedRankName?.rankId}`;
 
     try {
       const { data } = await getAuthorized(url);
       setMasterConfigList(data?.data);
     } catch (error) { }
   };
+
   const deleteItem = async (id: number) => {
     setloader({ ...loader, isLoading: true });
     let url = `${config.baseUrl}/superAdmin/deactivateMasterConfiguration`;
@@ -109,11 +111,18 @@ const ListMasterConfiguration = () => {
     }
   };
 
+  const returnData = appRoleMasterList
+    ?.filter((i) => i?.appId === selectedApp?.id)
+
+  const rankData = returnData?.filter((i) => {
+    return i?.roleName === selectedRole?.roleName
+  })
+
   useEffect(() => {
-    if (selectedRole?.id) {
+    if (selectedRole?.id || selectedRankName?.rankId) {
       getConfigList();
     }
-  }, [selectedRole]);
+  }, [selectedRole, selectedRankName]);
 
   useEffect(() => {
     getAppMasterList();
@@ -141,22 +150,32 @@ const ListMasterConfiguration = () => {
           <Container>
             <FormControl>
               <FormLabel>Role Name*</FormLabel>
-
               <Autocomplete
                 value={selectedRole?.roleName}
                 onChange={(e, value) => setSelectedRole(value)}
-                options={appRoleMasterList?.filter(
-                  (i) => i?.appId === selectedApp?.id
-                )}
+                options={appRoleMasterList
+                  ?.filter((i) => i?.appId === selectedApp?.id) // Filter by appId
+                  ?.filter((value, index, self) => // Remove duplicate role names
+                    index === self.findIndex((t) => t.roleName === value.roleName)
+                  )}
                 getOptionLabel={(option: any) => option?.roleName}
               />
             </FormControl>
           </Container>
+          <Container>
+            <FormControl>
+              <FormLabel>Select Rank</FormLabel>
+              <Autocomplete
+                value={selectedRankName}
+                onChange={(e, value) => setSelectedRankName(value)}
+                options={rankData}
+                getOptionLabel={(option: any) => option?.rankCode}
+              />
+            </FormControl>
+          </Container>
         </FlexDiv>
-
       </ProductWrapper>
-
-
+      
       {masterConfigList?.length > 0 ? (
         <FlexDiv width="100%" justifyContentCenter style={{ margin: "20px" }}>
           <TableContainer sx={{ width: "fit-content" }} component={Paper}>
