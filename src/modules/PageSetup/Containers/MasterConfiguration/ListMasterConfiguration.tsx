@@ -15,6 +15,7 @@ import { FaArrowRight, FaTrash } from "react-icons/fa";
 import {
   IconButton,
   Paper,
+  Switch,
   Table,
   TableBody,
   TableContainer,
@@ -28,11 +29,9 @@ import { ProductWrapper } from "../../../ProductManufacturer/Businessunits/compo
 const headers = [
   "Module Name",
   "Page Name",
-  // "Page Description",
   "Route Key",
   "Route Path",
   "Is Active",
-  "Actions",
 ];
 
 const ListMasterConfiguration = () => {
@@ -53,7 +52,10 @@ const ListMasterConfiguration = () => {
     type: "confirm",
     id: "",
   });
-  const [selectedRankName, setSelectedRankName] = useState({ rankId: "", rankCode: "", })
+  const [selectedRankName, setSelectedRankName] = useState({
+    rankId: "",
+    rankCode: "",
+  });
 
   const getAppMasterList = async () => {
     let url = `${config.baseUrl}/superAdmin/appMasters`;
@@ -61,7 +63,7 @@ const ListMasterConfiguration = () => {
     try {
       const { data } = await getAuthorized(url);
       setAppMasterList(data?.data);
-    } catch (error) { }
+    } catch (error) {}
   };
 
   const getAppRoleMaster = async () => {
@@ -70,7 +72,7 @@ const ListMasterConfiguration = () => {
     try {
       const { data } = await getAuthorized(url);
       setAppRoleMasterList(data?.data);
-    } catch (error) { }
+    } catch (error) {}
   };
 
   const getConfigList = async () => {
@@ -79,15 +81,15 @@ const ListMasterConfiguration = () => {
     try {
       const { data } = await getAuthorized(url);
       setMasterConfigList(data?.data);
-    } catch (error) { }
+    } catch (error) {}
   };
 
-  const deleteItem = async (id: number) => {
+  const deleteItem = async (id: number, flag: boolean) => {
     setloader({ ...loader, isLoading: true });
-    let url = `${config.baseUrl}/superAdmin/deactivateMasterConfiguration`;
+    let url = `${config.baseUrl}/superAdmin/toggleActiveFlag`;
 
     try {
-      const { data } = await putAuthorized(url, { id });
+      const { data } = await putAuthorized(url, { id, is_active: flag });
       setloader({
         ...loader,
         isLoading: false,
@@ -111,12 +113,13 @@ const ListMasterConfiguration = () => {
     }
   };
 
-  const returnData = appRoleMasterList
-    ?.filter((i) => i?.appId === selectedApp?.id)
+  const returnData = appRoleMasterList?.filter(
+    (i) => i?.appId === selectedApp?.id
+  );
 
   const rankData = returnData?.filter((i) => {
-    return i?.roleName === selectedRole?.roleName
-  })
+    return i?.roleName === selectedRole?.roleName;
+  });
 
   useEffect(() => {
     if (selectedRole?.id || selectedRankName?.rankId) {
@@ -132,7 +135,9 @@ const ListMasterConfiguration = () => {
   return (
     <div style={{ width: "90%", margin: "auto" }}>
       <FlexDiv justifyContentCenter style={{ marginTop: "1rem" }}>
-        <div style={{ fontSize: "1.3rem", color: "#f65000" }}>Master Configuration list</div>
+        <div style={{ fontSize: "1.3rem", color: "#f65000" }}>
+          Master Configuration list
+        </div>
       </FlexDiv>
       <ProductWrapper style={{ background: "#fbfbfb", padding: "20px" }}>
         <FlexDiv justifyContentCenter width="100%">
@@ -155,8 +160,14 @@ const ListMasterConfiguration = () => {
                 onChange={(e, value) => setSelectedRole(value)}
                 options={appRoleMasterList
                   ?.filter((i) => i?.appId === selectedApp?.id) // Filter by appId
-                  ?.filter((value, index, self) => // Remove duplicate role names
-                    index === self.findIndex((t) => t.roleName === value.roleName)
+                  ?.filter(
+                    (
+                      value,
+                      index,
+                      self // Remove duplicate role names
+                    ) =>
+                      index ===
+                      self.findIndex((t) => t.roleName === value.roleName)
                   )}
                 getOptionLabel={(option: any) => option?.roleName}
               />
@@ -175,7 +186,7 @@ const ListMasterConfiguration = () => {
           </Container>
         </FlexDiv>
       </ProductWrapper>
-      
+
       {masterConfigList?.length > 0 ? (
         <FlexDiv width="100%" justifyContentCenter style={{ margin: "20px" }}>
           <TableContainer sx={{ width: "fit-content" }} component={Paper}>
@@ -205,21 +216,14 @@ const ListMasterConfiguration = () => {
                         <StyledTableCell align="center">
                           {row?.routePath}
                         </StyledTableCell>
+
                         <StyledTableCell align="center">
-                          {row?.isActive ? "Yes" : "No"}
-                        </StyledTableCell>
-                        <StyledTableCell align="center">
-                          <IconButton
-                            onClick={() =>
-                              setRemoveModal({
-                                ...removeModal,
-                                show: true,
-                                id: row.id,
-                              })
+                          <Switch
+                            checked={row?.isActive}
+                            onChange={(e) =>
+                              deleteItem(row?.id, e.target.checked)
                             }
-                          >
-                            <FaTrash />
-                          </IconButton>
+                          />
                         </StyledTableCell>
                       </StyledTableRow>
                     );
@@ -245,7 +249,7 @@ const ListMasterConfiguration = () => {
         ghost
         card
       />
-      <ModalConfirmation
+      {/* <ModalConfirmation
         toggleModal={removeModal.show}
         setToggleModal={() => setRemoveModal({ ...removeModal, show: false })}
         modal={removeModal}
@@ -253,7 +257,7 @@ const ListMasterConfiguration = () => {
         onCancel={() => setRemoveModal({ ...removeModal, show: false })}
         header="Remove Item"
         body="Are you sure to delete This Configuration?"
-      />
+      /> */}
     </div>
   );
 };
