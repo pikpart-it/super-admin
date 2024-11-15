@@ -8,10 +8,14 @@ import { H2Heading } from "../../../../components/styled";
 import { appMasterTypes } from "../AppMaster/ListAppMaster";
 import { appRoleMasterSetupTypes } from "../AppRoleMaster/AppRoleMasterSetupList";
 import { config } from "../../../../config/config";
-import { getAuthorized, putAuthorized } from "../../../../services";
+import {
+  getAuthorized,
+  postAuthorized,
+  putAuthorized,
+} from "../../../../services";
 import { Container } from "../RoleMaster/CreateRoleMaster";
 import { Autocomplete, FormControl, FormLabel } from "@mui/joy";
-import { FaArrowRight, FaTrash } from "react-icons/fa";
+import { FaArrowRight, FaRemoveFormat, FaTrash } from "react-icons/fa";
 import {
   IconButton,
   Paper,
@@ -25,7 +29,7 @@ import MsgCard from "../../../../components/MsgCard";
 import { Loader } from "../../../../components/Loader";
 import ModalConfirmation from "../../../ProductManufacturer/OrderManagement/component/ModalConfirmation";
 import { ProductWrapper } from "../../../ProductManufacturer/Businessunits/component/AddBUForm";
-
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 const headers = [
   "Module Name",
   "Page Name",
@@ -83,7 +87,35 @@ const ListMasterConfiguration = () => {
       setMasterConfigList(data?.data);
     } catch (error) {}
   };
+  const hardDelete = async (id: number) => {
+    setloader({ ...loader, isLoading: true });
+    let url = `${config.baseUrl}/superAdmin/deleteMasterConfiguration`;
 
+    try {
+      const { data } = await postAuthorized(url, { id });
+
+      setloader({
+        ...loader,
+        isLoading: false,
+        error: data?.error,
+        msg: data?.message,
+      });
+      setTimeout(() => {
+        setloader({ ...loader, msg: "" });
+      }, 2000);
+      getConfigList();
+    } catch (error) {
+      setloader({
+        ...loader,
+        isLoading: false,
+        error: true,
+        msg: "Something Went Wrong",
+      });
+      setTimeout(() => {
+        setloader({ ...loader, msg: "" });
+      }, 5000);
+    }
+  };
   const deleteItem = async (id: number, flag: boolean) => {
     setloader({ ...loader, isLoading: true });
     let url = `${config.baseUrl}/superAdmin/toggleActiveFlag`;
@@ -122,7 +154,7 @@ const ListMasterConfiguration = () => {
   });
 
   useEffect(() => {
-    if (selectedRole?.id || selectedRankName?.rankId) {
+    if (selectedRole?.id) {
       getConfigList();
     }
   }, [selectedRole, selectedRankName]);
@@ -224,6 +256,11 @@ const ListMasterConfiguration = () => {
                               deleteItem(row?.id, e.target.checked)
                             }
                           />
+
+                          {/* <DeleteForeverIcon
+                            style={{ margin: "10px", cursor: "pointer" }}
+                            onClick={() => hardDelete(row?.id)}
+                          /> */}
                         </StyledTableCell>
                       </StyledTableRow>
                     );

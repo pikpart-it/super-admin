@@ -48,42 +48,44 @@ const ListModules = ({ moduleMasterList, deleteItem, edit }) => {
               <Header titles={headers} color="#000" />
               <TableBody>
                 {moduleMasterList.length
-                  ? moduleMasterList.map((row, index: number) => {
-                      return (
-                        <StyledTableRow key={row?.id}>
-                          <StyledTableCell align="center">
-                            {row?.id}
-                          </StyledTableCell>
-                          <StyledTableCell align="center">
-                            {row?.moduleName}
-                          </StyledTableCell>
-                          <StyledTableCell align="center">
-                            {row?.moduleDescription}
-                          </StyledTableCell>
-                          <StyledTableCell align="center">
-                            {row?.routeKey}
-                          </StyledTableCell>
-                          <StyledTableCell align="center">
-                            <FlexDiv justifyContentSpaceEvenly>
-                              <IconButton onClick={() => edit(row)}>
-                                <FaEdit />
-                              </IconButton>
-                              <IconButton
-                                onClick={() =>
-                                  setRemoveModal({
-                                    ...removeModal,
-                                    show: true,
-                                    id: row.id,
-                                  })
-                                }
-                              >
-                                <FaTrash />
-                              </IconButton>
-                            </FlexDiv>
-                          </StyledTableCell>
-                        </StyledTableRow>
-                      );
-                    })
+                  ? moduleMasterList
+                      ?.sort((a, b) => b?.id - a?.id)
+                      .map((row, index: number) => {
+                        return (
+                          <StyledTableRow key={row?.id}>
+                            <StyledTableCell align="center">
+                              {row?.id}
+                            </StyledTableCell>
+                            <StyledTableCell align="center">
+                              {row?.moduleName}
+                            </StyledTableCell>
+                            <StyledTableCell align="center">
+                              {row?.moduleDescription}
+                            </StyledTableCell>
+                            <StyledTableCell align="center">
+                              {row?.routeKey}
+                            </StyledTableCell>
+                            <StyledTableCell align="center">
+                              <FlexDiv justifyContentSpaceEvenly>
+                                <IconButton onClick={() => edit(row)}>
+                                  <FaEdit />
+                                </IconButton>
+                                <IconButton
+                                  onClick={() =>
+                                    setRemoveModal({
+                                      ...removeModal,
+                                      show: true,
+                                      id: row.id,
+                                    })
+                                  }
+                                >
+                                  <FaTrash />
+                                </IconButton>
+                              </FlexDiv>
+                            </StyledTableCell>
+                          </StyledTableRow>
+                        );
+                      })
                   : null}
               </TableBody>
             </Table>

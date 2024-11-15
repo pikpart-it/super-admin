@@ -42,7 +42,7 @@ const CreateMasterConfiguration = ({ history }) => {
     app_name: { appName: "", id: 0, appId: "" },
     app_type: { name: "", value: "" },
     role_name: { roleName: "", id: 0, roleId: 0 },
-    rank: { id: 0, rankCode: "", rankDescription: "" },
+    rank: { rankId: 0, rankCode: "", rankDescription: "" },
     app_id: "",
     role_id: "",
     priviledge_type: "Create",
@@ -51,19 +51,20 @@ const CreateMasterConfiguration = ({ history }) => {
     is_active: true,
   });
 
-  const returnData = appRoleMasterList
-    ?.filter((i) => i?.appId === masterConfiguration?.app_name?.id)
+  const returnData = appRoleMasterList?.filter(
+    (i) => i?.appId === masterConfiguration?.app_name?.id
+  );
 
   const rankData = returnData?.filter((i) => {
-    return i?.roleName === masterConfiguration?.role_name?.roleName
-  })
+    return i?.roleName === masterConfiguration?.role_name?.roleName;
+  });
   const getModuleMasterList = async () => {
     let url = `${config.baseUrl}/superAdmin/appModuleMasters`;
 
     try {
       const { data } = await getAuthorized(url);
       setModuleMasterList(data?.data);
-    } catch (error) { }
+    } catch (error) {}
   };
   const getAppMasterList = async () => {
     let url = `${config.baseUrl}/superAdmin/appMasters`;
@@ -71,7 +72,7 @@ const CreateMasterConfiguration = ({ history }) => {
     try {
       const { data } = await getAuthorized(url);
       setAppMasterList(data?.data);
-    } catch (error) { }
+    } catch (error) {}
   };
 
   const getAppRoleMaster = async () => {
@@ -79,7 +80,7 @@ const CreateMasterConfiguration = ({ history }) => {
     try {
       const { data } = await getAuthorized(url);
       setAppRoleMasterList(data?.data);
-    } catch (error) { }
+    } catch (error) {}
   };
 
   const getPageMaster = async () => {
@@ -99,7 +100,7 @@ const CreateMasterConfiguration = ({ history }) => {
         (i) => i?.moduleId === masterConfiguration.module_name.moduleId
       );
       setModulePageMasterList(filtered);
-    } catch (error) { }
+    } catch (error) {}
   };
 
   const onChange = (target) => {
@@ -125,10 +126,10 @@ const CreateMasterConfiguration = ({ history }) => {
         is_active: masterConfiguration?.is_active,
         priviledge_type: masterConfiguration?.priviledge_type,
         rank_code: masterConfiguration?.rank?.rankCode,
-        rank_id: masterConfiguration?.rank?.id,
+        rank_id: masterConfiguration?.rank?.rankId,
       }));
   };
-
+  console.log({ masterConfiguration });
   const onSubmit = async () => {
     setloader({ ...loader, isLoading: true });
     let url = `${config.baseUrl}/superAdmin/addUpdateMasterConfiguration`;
@@ -232,7 +233,9 @@ const CreateMasterConfiguration = ({ history }) => {
   return (
     <div style={{ width: "90%", margin: "auto" }}>
       <FlexDiv justifyContentCenter style={{ marginTop: "1rem" }}>
-        <div style={{ fontSize: "1.3rem", color: "#f65000" }}>Master Configuration</div>
+        <div style={{ fontSize: "1.3rem", color: "#f65000" }}>
+          Master Configuration
+        </div>
       </FlexDiv>
 
       <ProductWrapper style={{ background: "#fbfbfb", padding: "20px" }}>
@@ -280,7 +283,6 @@ const CreateMasterConfiguration = ({ history }) => {
             </FormControl>
           </Container>
 
-
           <Container style={{ width: "20%" }}>
             <FormControl>
               <FormLabel>Role Name*</FormLabel>
@@ -288,16 +290,24 @@ const CreateMasterConfiguration = ({ history }) => {
                 value={masterConfiguration?.role_name}
                 onChange={(e, value) => onChange({ name: "role_name", value })}
                 options={appRoleMasterList
-                  ?.filter((i) => i?.appId === masterConfiguration?.app_name?.id) // Filter by appId
-                  ?.filter((value, index, self) => // Remove duplicate role names
-                    index === self.findIndex((t) => t.roleName === value.roleName)
+                  ?.filter(
+                    (i) => i?.appId === masterConfiguration?.app_name?.id
+                  ) // Filter by appId
+                  ?.filter(
+                    (
+                      value,
+                      index,
+                      self // Remove duplicate role names
+                    ) =>
+                      index ===
+                      self.findIndex((t) => t.roleName === value.roleName)
                   )}
                 getOptionLabel={(option: any) => option?.roleName}
               />
             </FormControl>
           </Container>
 
-          <FlexDiv style={{width:"100%"}} alignItemsCenter>
+          <FlexDiv style={{ width: "100%" }} alignItemsCenter>
             <Container>
               <FormControl>
                 <FormLabel>Select Rank</FormLabel>
@@ -308,18 +318,20 @@ const CreateMasterConfiguration = ({ history }) => {
                   getOptionLabel={(option: any) => option?.rankCode}
                 />
               </FormControl>
-
             </Container>
-            <Button variant="contained" color="success" onClick={onSubmit} style={{ marginLeft: "10px", marginTop: "20px", }}>
+            <Button
+              variant="contained"
+              color="success"
+              onClick={onSubmit}
+              style={{ marginLeft: "10px", marginTop: "20px" }}
+            >
               Submit
             </Button>
           </FlexDiv>
-
         </FlexDiv>
       </ProductWrapper>
 
-
-      {masterConfiguration?.module_name?.moduleId && (
+      {!!masterConfiguration?.module_name?.moduleId && (
         <ListMasterConfigurationTable
           onPageSelect={onPageSelect}
           modulePageMasterList={modulePageMasterList}

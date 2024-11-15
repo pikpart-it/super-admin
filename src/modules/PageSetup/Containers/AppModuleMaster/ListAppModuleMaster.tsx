@@ -55,50 +55,52 @@ const ListAppModuleMaster = ({ edit, deleteItem, appModuleMasterList }) => {
               <Header titles={headers} color="#000" />
               <TableBody>
                 {appModuleMasterList.length
-                  ? appModuleMasterList.map((row) => {
-                      return (
-                        <StyledTableRow key={row?.id}>
-                          <StyledTableCell align="center">
-                            {row?.id}
-                          </StyledTableCell>
-                          <StyledTableCell align="center">
-                            {row?.appName}
-                          </StyledTableCell>
-                          <StyledTableCell align="center">
-                            {row?.appId}
-                          </StyledTableCell>
-                          <StyledTableCell align="center">
-                            {row?.moduleName}
-                          </StyledTableCell>
-                          <StyledTableCell align="center">
-                            {row?.routeKey}
-                          </StyledTableCell>
-                          <StyledTableCell align="center">
-                            {row?.isActive ? "Yes" : "No"}
-                          </StyledTableCell>
+                  ? appModuleMasterList
+                      ?.sort((a, b) => b?.id - a?.id)
+                      ?.map((row) => {
+                        return (
+                          <StyledTableRow key={row?.id}>
+                            <StyledTableCell align="center">
+                              {row?.id}
+                            </StyledTableCell>
+                            <StyledTableCell align="center">
+                              {row?.appName}
+                            </StyledTableCell>
+                            <StyledTableCell align="center">
+                              {row?.appId}
+                            </StyledTableCell>
+                            <StyledTableCell align="center">
+                              {row?.moduleName}
+                            </StyledTableCell>
+                            <StyledTableCell align="center">
+                              {row?.routeKey}
+                            </StyledTableCell>
+                            <StyledTableCell align="center">
+                              {row?.isActive ? "Yes" : "No"}
+                            </StyledTableCell>
 
-                          <StyledTableCell align="center">
-                            <FlexDiv justifyContentSpaceEvenly>
-                              <IconButton onClick={() => edit(row)}>
-                                <FaEdit />
-                              </IconButton>
+                            <StyledTableCell align="center">
+                              <FlexDiv justifyContentSpaceEvenly>
+                                <IconButton onClick={() => edit(row)}>
+                                  <FaEdit />
+                                </IconButton>
 
-                              <IconButton
-                                onClick={() =>
-                                  setRemoveModal({
-                                    ...removeModal,
-                                    show: true,
-                                    id: row.id,
-                                  })
-                                }
-                              >
-                                <FaTrash />
-                              </IconButton>
-                            </FlexDiv>
-                          </StyledTableCell>
-                        </StyledTableRow>
-                      );
-                    })
+                                <IconButton
+                                  onClick={() =>
+                                    setRemoveModal({
+                                      ...removeModal,
+                                      show: true,
+                                      id: row.id,
+                                    })
+                                  }
+                                >
+                                  <FaTrash />
+                                </IconButton>
+                              </FlexDiv>
+                            </StyledTableCell>
+                          </StyledTableRow>
+                        );
+                      })
                   : null}
               </TableBody>
             </Table>

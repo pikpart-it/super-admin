@@ -1,6 +1,12 @@
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import { lazy } from "react";
-import { FaBusinessTime, FaList, FaPlus, FaUpload } from "react-icons/fa";
+import {
+  FaBusinessTime,
+  FaList,
+  FaListUl,
+  FaPlus,
+  FaUpload,
+} from "react-icons/fa";
 import { lazily } from "react-lazily";
 import { userRole } from "../utility/func";
 import { returnLandingPage } from "../utility/roles";
@@ -8,9 +14,8 @@ import { userRoles } from "./constants/userRoles";
 
 const Logout = lazy(() => import("../modules/Auth/containers/Logout"));
 const Dashboard = lazy(() => import("../modules/Dashboard"));
-const CreateSalesAdmin = lazy(
-  () => import("../modules/CreateUsers/CreateSalesAdmin")
-);
+const CreateUsers = lazy(() => import("../modules/CreateUsers/CreateUsers"));
+const ListUsers = lazy(() => import("../modules/CreateUsers/ListUsers"));
 const {
   AddBusinessUnit,
   ListBusinessUnit,
@@ -50,6 +55,7 @@ export const RoutesPath = {
   NewLoginPage: "/",
   Dashboard: "/dashboard",
   RegisterUser: "/register",
+  ListUsers: "/users-list",
   NewPmDashboard: "/pmdashboard",
   Logout: "/logout",
   AddBusinessUnit: "/product-manufacturer/add-bu",
@@ -76,7 +82,7 @@ export const RoutesPath = {
   AppRoleMasterSetup: "/app-role-master-setup",
   AppRoleMasterSetupList: "/app-role-master-setup-list",
   CreateAppModuleMaster: "/app-module-master",
-  AddRankCreateAppMaster: "/app-crate-rank",
+  AddRankCreateAppMaster: "/app-create-rank",
   ListAppModuleMaster: "/app-module-master-list",
   CreateModulePageMaster: "/module-page-master-create",
   ListModulePageMaster: "/module-page-master-list",
@@ -150,7 +156,21 @@ export const routesConfig: any = [
     link: RoutesPath.CreateRoleMaster,
     path: RoutesPath.CreateRoleMaster,
   },
-
+  {
+    authenticated: true,
+    bLabel: "",
+    children: undefined,
+    component: AddRankCreateAppMaster,
+    pageTitle: "Add Rank",
+    key: "SuperAdminRanksSetup",
+    exact: true,
+    icon: FaPlus,
+    label: "Add Rank",
+    layout: ["header", "sidebar"],
+    userAllowed: [],
+    link: RoutesPath.AddRankCreateAppMaster,
+    path: RoutesPath.AddRankCreateAppMaster,
+  },
   {
     authenticated: true,
     bLabel: "",
@@ -212,21 +232,7 @@ export const routesConfig: any = [
     link: RoutesPath.CreateAppModuleMaster,
     path: RoutesPath.CreateAppModuleMaster,
   },
-  {
-    authenticated: true,
-    bLabel: "",
-    children: undefined,
-    component: AddRankCreateAppMaster,
-    pageTitle: "Add Rank",
-    key: "SuperAdminAppModuleMasterSetup",
-    exact: true,
-    icon: FaPlus,
-    label: "Add Rank",
-    layout: ["header", "sidebar"],
-    userAllowed: [],
-    link: RoutesPath.AddRankCreateAppMaster,
-    path: RoutesPath.AddRankCreateAppMaster,
-  },
+
   {
     authenticated: true,
     bLabel: "",
@@ -295,18 +301,33 @@ export const routesConfig: any = [
     children: [
       {
         authenticated: true,
-        bLabel: "CreateSalesAdmin",
+        bLabel: "CreateUsers",
         children: undefined,
-        component: CreateSalesAdmin,
+        component: CreateUsers,
         exact: true,
         icon: FaPlus,
-        key: "RegisterSalesAdminUsers",
-        pageTitle: "CreateSalesAdmin",
-        label: "Create Sales Admin",
+        key: "CreateUsers",
+        pageTitle: "CreateUsers",
+        label: "Create Users",
         layout: ["header", "sidebar"],
         userAllowed: [],
         link: RoutesPath.RegisterUser,
         path: RoutesPath.RegisterUser,
+      },
+      {
+        authenticated: true,
+        bLabel: "ListUsers",
+        children: undefined,
+        component: ListUsers,
+        exact: true,
+        icon: FaListUl,
+        key: "ListUsers",
+        pageTitle: "ListUsers",
+        label: "List Users",
+        layout: ["header", "sidebar"],
+        userAllowed: [],
+        link: RoutesPath.ListUsers,
+        path: RoutesPath.ListUsers,
       },
     ],
     component: undefined,

@@ -17,7 +17,9 @@ const pages = [
   "SuperAdminModulePageMasterSetup",
   "SuperAdminMasterConfiguration",
   "SuperAdminMasterConfigurationList",
-  "RegisterSalesAdminUsers",
+  "SuperAdminRanksSetup",
+  "CreateUsers",
+  "ListUsers",
 ];
 
 function AppLayout() {
