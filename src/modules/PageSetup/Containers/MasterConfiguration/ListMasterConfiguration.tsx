@@ -82,7 +82,7 @@ const ListMasterConfiguration = () => {
   };
 
   const getConfigList = async () => {
-    let url = `${config.baseUrl}/superAdmin/masterConfigurations?role_id=${selectedRole?.roleId}&rank_id=${selectedRankName?.rankId}`;
+    let url = `${config.baseUrl}/superAdmin/masterConfigurations?role_id=${selectedRole?.roleId}&rank_id=${selectedRankName?.rankId === undefined ? "" : selectedRankName?.rankId}`;
 
     try {
       const { data } = await getAuthorized(url);
