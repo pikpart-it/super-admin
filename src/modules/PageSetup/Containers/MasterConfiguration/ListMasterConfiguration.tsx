@@ -33,6 +33,8 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 const headers = [
   "Module Name",
   "Page Name",
+  "RoleName",
+  "Rank",
   "Route Key",
   "Route Path",
   "Is Active",
@@ -67,7 +69,7 @@ const ListMasterConfiguration = () => {
     try {
       const { data } = await getAuthorized(url);
       setAppMasterList(data?.data);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const getAppRoleMaster = async () => {
@@ -76,7 +78,7 @@ const ListMasterConfiguration = () => {
     try {
       const { data } = await getAuthorized(url);
       setAppRoleMasterList(data?.data);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const getConfigList = async () => {
@@ -85,7 +87,7 @@ const ListMasterConfiguration = () => {
     try {
       const { data } = await getAuthorized(url);
       setMasterConfigList(data?.data);
-    } catch (error) {}
+    } catch (error) { }
   };
   const hardDelete = async (id: number) => {
     setloader({ ...loader, isLoading: true });
@@ -239,6 +241,8 @@ const ListMasterConfiguration = () => {
                         <StyledTableCell align="center">
                           {row?.pageName}
                         </StyledTableCell>
+                        <StyledTableCell align="center">{row?.roleName}</StyledTableCell>
+                        <StyledTableCell align="center">{row?.rankCode}</StyledTableCell>
                         {/* <StyledTableCell align="center">
                           {row?.pageDescription}
                         </StyledTableCell> */}
