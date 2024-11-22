@@ -30,17 +30,29 @@ import { Loader } from "../../../../components/Loader";
 import ModalConfirmation from "../../../ProductManufacturer/OrderManagement/component/ModalConfirmation";
 import { ProductWrapper } from "../../../ProductManufacturer/Businessunits/component/AddBUForm";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import Select, { selectClasses } from '@mui/joy/Select';
+import Option from '@mui/joy/Option';
+import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
+import { moduleMasterTypes } from "../ModuleMaster/ListModules";
+import Input from '@mui/joy/Input';
+import EditIcon from '@mui/icons-material/Edit';
+import { RoutesPath } from "../../../../config/routes.config";
+import { useHistory } from "react-router-dom";
+
 const headers = [
   "Module Name",
   "Page Name",
   "RoleName",
   "Rank",
+  "Display Sequence",
   "Route Key",
   "Route Path",
   "Is Active",
+  "Action"
 ];
 
 const ListMasterConfiguration = () => {
+  const history = useHistory()
   const [masterConfigList, setMasterConfigList] = useState<any[]>([]);
   const [selectedApp, setSelectedApp] = useState<appMasterTypes>();
   const [selectedRole, setSelectedRole] = useState<appRoleMasterSetupTypes>();
@@ -53,6 +65,10 @@ const ListMasterConfiguration = () => {
     error: false,
     msg: "",
   });
+  const [moduleMasterList, setModuleMasterList] = useState<moduleMasterTypes[]>(
+    []
+  );
+  const [filterSelectedModule, setFilterSelectedModule] = useState<number>()
   const [removeModal, setRemoveModal] = useState<any>({
     show: false,
     type: "confirm",
@@ -62,6 +78,22 @@ const ListMasterConfiguration = () => {
     rankId: "",
     rankCode: "",
   });
+
+  const handleChange = (
+    event: React.SyntheticEvent | null,
+    newValue: number | null,
+  ) => {
+    setFilterSelectedModule(newValue || 0)
+  };
+
+  const getModuleMasterList = async () => {
+    let url = `${config.baseUrl}/superAdmin/moduleMasters`;
+
+    try {
+      const { data } = await getAuthorized(url);
+      setModuleMasterList(data?.data);
+    } catch (error) { }
+  };
 
   const getAppMasterList = async () => {
     let url = `${config.baseUrl}/superAdmin/appMasters`;
@@ -74,7 +106,6 @@ const ListMasterConfiguration = () => {
 
   const getAppRoleMaster = async () => {
     let url = `${config.baseUrl}/superAdmin/appRoleMasters`;
-
     try {
       const { data } = await getAuthorized(url);
       setAppRoleMasterList(data?.data);
@@ -82,8 +113,7 @@ const ListMasterConfiguration = () => {
   };
 
   const getConfigList = async () => {
-    let url = `${config.baseUrl}/superAdmin/masterConfigurations?role_id=${selectedRole?.roleId}&rank_id=${selectedRankName?.rankId === undefined ? "" : selectedRankName?.rankId}`;
-
+    let url = `${config.baseUrl}/superAdmin/masterConfigurations?${filterSelectedModule ? `module_id=${filterSelectedModule}` : ""}${selectedRole?.id ? `&role_id=${selectedRole?.roleId}` : ""}${selectedRankName?.rankId ? `&rank_id=${selectedRankName?.rankId}` : ""}`;
     try {
       const { data } = await getAuthorized(url);
       setMasterConfigList(data?.data);
@@ -156,14 +186,15 @@ const ListMasterConfiguration = () => {
   });
 
   useEffect(() => {
-    if (selectedRole?.id) {
+    if (selectedRole?.id || filterSelectedModule || selectedRole?.id) {
       getConfigList();
     }
-  }, [selectedRole, selectedRankName]);
+  }, [selectedRole, selectedRankName, filterSelectedModule]);
 
   useEffect(() => {
     getAppMasterList();
     getAppRoleMaster();
+    getModuleMasterList()
   }, []);
 
   return (
@@ -184,6 +215,33 @@ const ListMasterConfiguration = () => {
                 options={appMasterList}
                 getOptionLabel={(option: any) => option?.appName}
               />
+            </FormControl>
+          </Container>
+          <Container>
+            <FormControl>
+              <FormLabel>Module Name</FormLabel>
+              <Select
+                indicator={<KeyboardArrowDown />}
+                sx={{
+                  width: 240,
+                  [`& .${selectClasses.indicator}`]: {
+                    transition: '0.2s',
+                    [`&.${selectClasses.expanded}`]: {
+                      transform: 'rotate(-180deg)',
+                    },
+                  },
+                }}
+                value={filterSelectedModule}
+                onChange={handleChange}
+              >
+                {
+                  moduleMasterList?.map((i, index) => {
+                    return (
+                      <Option key={index} value={i?.id}>{i?.moduleName}</Option>
+                    )
+                  })
+                }
+              </Select>
             </FormControl>
           </Container>
           <Container>
@@ -243,16 +301,13 @@ const ListMasterConfiguration = () => {
                         </StyledTableCell>
                         <StyledTableCell align="center">{row?.roleName}</StyledTableCell>
                         <StyledTableCell align="center">{row?.rankCode}</StyledTableCell>
-                        {/* <StyledTableCell align="center">
-                          {row?.pageDescription}
-                        </StyledTableCell> */}
+                        <StyledTableCell align="center">{row?.prioritySeq}</StyledTableCell>
                         <StyledTableCell align="center">
                           {row?.routeKey}
                         </StyledTableCell>
                         <StyledTableCell align="center">
                           {row?.routePath}
                         </StyledTableCell>
-
                         <StyledTableCell align="center">
                           <Switch
                             checked={row?.isActive}
@@ -266,6 +321,12 @@ const ListMasterConfiguration = () => {
                             onClick={() => hardDelete(row?.id)}
                           /> */}
                         </StyledTableCell>
+                        <StyledTableCell
+                          align="center"
+                          style={{ cursor: "pointer" }}
+                          onClick={() => {
+                            history.push(RoutesPath?.UpdateMasterConfigurationList, row)
+                          }}><EditIcon /></StyledTableCell>
                       </StyledTableRow>
                     );
                   })}

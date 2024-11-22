@@ -50,6 +50,7 @@ const {
   ListMasterConfiguration,
   CreateModule,
   ListModules,
+  UpdateMasterConfigurationList
 } = lazily(() => import("../modules/PageSetup"));
 export const RoutesPath = {
   NewLoginPage: "/",
@@ -90,6 +91,7 @@ export const RoutesPath = {
   ListMasterConfiguration: "/master-config-list",
   CreateModule: "/module-master-create",
   ListModules: "/module-master-list",
+  UpdateMasterConfigurationList: "/update-master-config-list"
 };
 
 export const routesConfig: any = [
@@ -282,8 +284,22 @@ export const routesConfig: any = [
         link: RoutesPath.ListMasterConfiguration,
         path: RoutesPath.ListMasterConfiguration,
       },
+      {
+        authenticated: true,
+        bLabel: "UpdateMasterConfigurationList",
+        children: undefined,
+        component: UpdateMasterConfigurationList,
+        pageTitle: "UpdateMasterConfigurationList",
+        key: "SuperAdminMasterConfiguration",
+        exact: true,
+        icon: FaList,
+        label: "",
+        layout: ["header", "sidebar"],
+        userAllowed: [],
+        link: RoutesPath.UpdateMasterConfigurationList,
+        path: RoutesPath.UpdateMasterConfigurationList,
+      },
     ],
-
     component: undefined,
     pageTitle: "Master Configuration",
     key: "ModulePageMasterSection",

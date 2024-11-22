@@ -324,7 +324,7 @@ const CreateSalesAdmin = () => {
             variant="contained"
             color="success"
             onClick={dataforEdit?.id ? Edit : onSubmit}
-            disabled={dataforEdit?.id ? false : enabled}
+            // disabled={dataforEdit?.id ? false : enabled}
           >
             Submit{" "}
           </Button>

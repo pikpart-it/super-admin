@@ -13,3 +13,4 @@ export { default as CreateMasterConfiguration } from "./Containers/MasterConfigu
 export { default as ListMasterConfiguration } from "./Containers/MasterConfiguration/ListMasterConfiguration";
 export { default as CreateModule } from "./Containers/ModuleMaster/CreateModule";
 export { default as ListModules } from "./Containers/ModuleMaster/ListModules";
+export { default as UpdateMasterConfigurationList } from "./Containers/MasterConfiguration/UpdateMasterConfigurationList"
