@@ -18,19 +18,31 @@ const UpdateMasterConfigurationList = () => {
         msg: "",
     });
     const [updateConfiglist, setUpdateConfigList] = useState<any>({
+        prioritySeq: Data?.prioritySeq,
+        bottomNo: Data?.bottomNo,
+        menuNo: Data?.menuNo,
         isBottomMenu: Data?.isBottomMenu,
         isMenu: Data?.isMenu,
-        prioritySeq: Data?.prioritySeq
+        isHomeTile: Data?.isHomeTile,
+        homeTileName: Data?.homeTileName,
+        bottomMenuName: Data?.bottomMenuName,
+        menuName: Data?.menuName
     })
     const updateList = async () => {
         setloader({ ...loader, isLoading: true });
         let url = `${config.baseUrl}/superAdmin/updateMasterConfigurationPriority`
-        const { prioritySeq, isBottomMenu, isMenu } = updateConfiglist
+        const { prioritySeq, isBottomMenu, isMenu, bottomNo, menuNo, isHomeTile, homeTileName, bottomMenuName, menuName } = updateConfiglist
         const body = {
             id: Data?.id,
             seq_no: parseInt(prioritySeq),
+            bottom_no: parseInt(bottomNo),
+            menu_no: parseInt(menuNo),
             is_menu: isMenu,
-            is_bottom_menu: isBottomMenu
+            is_bottom_menu: isBottomMenu,
+            is_home_tile: isHomeTile,
+            home_tile_name: homeTileName,
+            bottom_menu_name: bottomMenuName,
+            menu_name: menuName,
         }
         try {
             const { data } = await postAuthorized(url, body)
@@ -55,16 +67,8 @@ const UpdateMasterConfigurationList = () => {
             }, 5000);
         }
     }
-    const isEnabled = () => {
-        const { prioritySeq, isBottomMenu, isMenu } = updateConfiglist
-        if (!prioritySeq || !isBottomMenu || !isMenu) {
-            return true
-        } else {
-            return false
-        }
-    }
     return (
-        <div style={{ width: "90%", margin: "auto" }}>
+        <div style={{ width: "95%", margin: "auto" }}>
             <FlexDiv justifyContentCenter style={{ marginTop: "1rem" }}>
                 <div style={{ fontSize: "1.3rem", color: "#f65000" }}>
                     Update Master Configuration list
@@ -75,20 +79,27 @@ const UpdateMasterConfigurationList = () => {
                     <thead>
                         <tr>
                             <th style={{ width: "12%" }}>Role Name</th>
-                            <th style={{ width: "20%" }}>Module Name</th>
-                            <th style={{ width: "12%" }}>Page Name</th>
+                            {/* <th style={{ width: "20%" }}>Module Name</th>
+                            <th style={{ width: "12%" }}>Page Name</th> */}
                             <th style={{ width: "12%" }}>Rank</th>
-                            <th style={{ width: "12%" }}>Display Sequence</th>
+                            <th style={{ width: "12%" }}>Home Tile Order</th>
+                            <th style={{ width: "12%" }}>Bottom Menu Order</th>
+                            <th style={{ width: "12%" }}>Menu Order</th>
+                            <th style={{ width: "12%" }}>Is Home Tile</th>
                             <th style={{ width: "12%" }}>Is Bottom</th>
                             <th style={{ width: "12%" }}>Is Menu</th>
+                            <th style={{ width: "12%" }}>Home TileName</th>
+                            <th style={{ width: "12%" }}>Bottom Menu Name</th>
+                            <th style={{ width: "12%" }}>Menu Name</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td style={{ width: "12%" }}>{Data.roleName}</td>
-                            <td style={{ width: "20%" }}>{Data.moduleName}</td>
-                            <td style={{ width: "12%" }}>{Data.pageName}</td>
+                            {/* <td style={{ width: "20%" }}>{Data.moduleName}</td>
+                            <td style={{ width: "12%" }}>{Data.pageName}</td> */}
                             <td style={{ width: "12%" }}>{Data.rankCode}</td>
+
                             <td style={{ width: "12%" }}>
                                 <Input
                                     placeholder="display order"
@@ -102,6 +113,42 @@ const UpdateMasterConfigurationList = () => {
                                 />
                             </td>
                             <td style={{ width: "12%" }}>
+                                <Input
+                                    placeholder="bottom menu order"
+                                    value={updateConfiglist?.bottomNo}
+                                    onChange={(e) => {
+                                        setUpdateConfigList({
+                                            ...updateConfiglist,
+                                            bottomNo: e?.target?.value
+                                        })
+                                    }}
+                                />
+                            </td>
+                            <td style={{ width: "12%" }}>
+                                <Input
+                                    placeholder="menu order"
+                                    value={updateConfiglist?.menuNo}
+                                    onChange={(e) => {
+                                        setUpdateConfigList({
+                                            ...updateConfiglist,
+                                            menuNo: e?.target?.value
+                                        })
+                                    }}
+                                />
+                            </td>
+
+                            {/* ///SwicthButton */}
+                            <td style={{ width: "12%" }}>
+                                <Switch
+                                    checked={updateConfiglist?.isHomeTile}
+                                    onChange={(e) => {
+                                        setUpdateConfigList({
+                                            ...updateConfiglist,
+                                            isHomeTile: e?.target?.checked
+                                        })
+                                    }}
+                                /></td>
+                            <td style={{ width: "12%" }}>
                                 <Switch
                                     checked={updateConfiglist?.isBottomMenu}
                                     onChange={(e) => {
@@ -110,7 +157,8 @@ const UpdateMasterConfigurationList = () => {
                                             isBottomMenu: e?.target?.checked
                                         })
                                     }}
-                                /></td>
+                                />
+                            </td>
                             <td style={{ width: "12%" }}>
                                 <Switch
                                     checked={updateConfiglist?.isMenu}
@@ -118,6 +166,43 @@ const UpdateMasterConfigurationList = () => {
                                         setUpdateConfigList({
                                             ...updateConfiglist,
                                             isMenu: e?.target?.checked
+                                        })
+                                    }}
+                                /></td>
+
+                            {/* //Names */}
+                            <td style={{ width: "12%" }}>
+                                <Input
+                                    placeholder="home tile name"
+                                    value={updateConfiglist?.homeTileName}
+                                    onChange={(e) => {
+                                        setUpdateConfigList({
+                                            ...updateConfiglist,
+                                            homeTileName: e?.target?.value
+                                        })
+                                    }}
+                                />
+                            </td>
+                            <td style={{ width: "12%" }}>
+                                <Input
+                                    placeholder="bottom menu name"
+                                    value={updateConfiglist?.bottomMenuName}
+                                    onChange={(e) => {
+                                        setUpdateConfigList({
+                                            ...updateConfiglist,
+                                            bottomMenuName: e?.target?.value
+                                        })
+                                    }}
+                                />
+                            </td>
+                            <td style={{ width: "12%" }}>
+                                <Input
+                                    placeholder="menu name"
+                                    value={updateConfiglist?.menuName}
+                                    onChange={(e) => {
+                                        setUpdateConfigList({
+                                            ...updateConfiglist,
+                                            menuName: e?.target?.value
                                         })
                                     }}
                                 />
@@ -132,7 +217,6 @@ const UpdateMasterConfigurationList = () => {
                     variant="contained"
                     color="success"
                     onClick={updateList}
-                    disabled={isEnabled()}
                 >
                     Submit{" "}
                 </Button>
