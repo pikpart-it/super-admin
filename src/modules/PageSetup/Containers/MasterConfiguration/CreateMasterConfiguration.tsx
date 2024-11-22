@@ -129,7 +129,7 @@ const CreateMasterConfiguration = ({ history }) => {
         rank_id: masterConfiguration?.rank?.rankId,
       }));
   };
-  console.log({ masterConfiguration });
+
   const onSubmit = async () => {
     setloader({ ...loader, isLoading: true });
     let url = `${config.baseUrl}/superAdmin/addUpdateMasterConfiguration`;

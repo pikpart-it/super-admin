@@ -6,11 +6,17 @@ const respWidth = () =>
   window.innerWidth < 540
     ? "150px"
     : window.innerWidth < 900
-    ? "200px"
-    : window.innerWidth < 1400
-    ? "250px"
-    : "300px";
-
+      ? "200px"
+      : window.innerWidth < 1400
+        ? "250px"
+        : "300px";
+        
+const getResponsiveWidth = () => {
+  if (window.innerWidth < 540) return "150px";
+  if (window.innerWidth < 900) return "200px";
+  if (window.innerWidth < 1400) return "250px";
+  return "300px";
+};
 export const sideBarOpenWidth = respWidth();
 export const sideBarWidth = window.innerWidth < 540 ? "0px" : "50px";
 
@@ -24,11 +30,16 @@ export const StyledTableCell = styled(TableCell)(({ theme }) => ({
     fontSize: 14,
     padding: '8px', // Adjust padding as needed
   },
+  [`&`]: {
+    width: getResponsiveWidth(),
+  },
+
 }));
 
 export const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
     backgroundColor: "rgba(0, 0, 0, 0.04)",
+    fontSize: 14,
   },
   // hide last border
   "&:last-child td, &:last-child th": {
@@ -59,24 +70,24 @@ export const FlexDiv = styled.div<{
     props.justifyContentCenter
       ? "center"
       : props.justifyContentFlexStart
-      ? "flex-start"
-      : props.justifyContentFlexEnd
-      ? "flex-end"
-      : props.justifyContentSpaceEvenly
-      ? "space-evenly"
-      : props.justifyContentSpaceBetween
-      ? "space-between"
-      : props.justifyContentSpaceAround
-      ? "space-arount"
-      : "none"};
+        ? "flex-start"
+        : props.justifyContentFlexEnd
+          ? "flex-end"
+          : props.justifyContentSpaceEvenly
+            ? "space-evenly"
+            : props.justifyContentSpaceBetween
+              ? "space-between"
+              : props.justifyContentSpaceAround
+                ? "space-arount"
+                : "none"};
   align-items: ${(props) =>
     props.alignItemsCenter
       ? "center"
       : props.alignItemsFlexStart
-      ? "flex-start"
-      : props.alignItemsFlexEnd
-      ? "flex-end"
-      : "none"};
+        ? "flex-start"
+        : props.alignItemsFlexEnd
+          ? "flex-end"
+          : "none"};
   width: ${(props) => props.width};
   margin: ${(props) => props.margin};
 
@@ -122,18 +133,17 @@ export const PortalDiv: any = styled.div`
   ${(props: any) => {
     return `
     margin-left: ${props.menuOpen || !props.hasSidebar ? "0px" : "50px"};
-   width: calc(100vw - ${
-     props.sidebar ? (props.menuOpen ? sideBarOpenWidth : sideBarWidth) : "0px"
-   });
+   width: calc(100vw - ${props.sidebar ? (props.menuOpen ? sideBarOpenWidth : sideBarWidth) : "0px"
+      });
   `;
   }};
   @media (max-width: 540px) {
     ${(props: any) => {
-      return `
+    return `
       margin-left: 0px;
       width: 100%;
     `;
-    }};
+  }};
   }
 `;
 

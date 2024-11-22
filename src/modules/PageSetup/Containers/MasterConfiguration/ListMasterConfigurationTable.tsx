@@ -11,7 +11,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 const headers = [
   "Module Name",
   "Page Name",
-  //  "Page Description",
+   "Page Description",
   "Route Key",
   "Route Path",
   "Is Active",
@@ -55,9 +55,9 @@ const ListMasterConfigurationTable = ({
                       >
                         {row?.pageName}
                       </StyledTableCell>
-                      {/* <StyledTableCell align="center" style={{fontSize:'12px'}}>
+                      <StyledTableCell align="center" style={{fontSize:'12px'}}>
                           {row?.pageDescription}
-                        </StyledTableCell> */}
+                        </StyledTableCell>
                       <StyledTableCell
                         align="center"
                         style={{ fontSize: "12px" }}

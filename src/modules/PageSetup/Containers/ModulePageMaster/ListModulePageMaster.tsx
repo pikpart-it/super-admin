@@ -88,6 +88,7 @@ const ListModulePageMaster = ({ modulePageMasterList, edit, deleteItem }) => {
                         >
                           {row?.pageDescription}
                         </StyledTableCell>
+
                         <StyledTableCell
                           align="center"
                           style={{ fontSize: "12px" }}
@@ -106,7 +107,6 @@ const ListModulePageMaster = ({ modulePageMasterList, edit, deleteItem }) => {
                         >
                           {row?.isActive ? "Yes" : "No"}
                         </StyledTableCell>
-
                         <StyledTableCell
                           align="center"
                           style={{ fontSize: "12px" }}
