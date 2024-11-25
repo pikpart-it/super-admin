@@ -38,6 +38,7 @@ import Input from '@mui/joy/Input';
 import EditIcon from '@mui/icons-material/Edit';
 import { RoutesPath } from "../../../../config/routes.config";
 import { useHistory } from "react-router-dom";
+import UpdateMasterConfigurationList from "./UpdateMasterConfigurationList";
 
 const headers = [
   "Module Name",
@@ -78,7 +79,12 @@ const ListMasterConfiguration = () => {
     rankId: "",
     rankCode: "",
   });
-
+  const [editModalOpen, setEditModalOpen] = useState(false)
+  const [editedData, setEditedData] = useState([])
+  const handleEditModalOpen = (data) => {
+    setEditedData(data)
+    setEditModalOpen(true)
+  }
   const handleChange = (
     event: React.SyntheticEvent | null,
     newValue: number | null,
@@ -324,9 +330,13 @@ const ListMasterConfiguration = () => {
                         <StyledTableCell
                           align="center"
                           style={{ cursor: "pointer" }}
+                          // onClick={() => {
+                          //   history.push(RoutesPath?.UpdateMasterConfigurationList, row)
+                          // }}
                           onClick={() => {
-                            history.push(RoutesPath?.UpdateMasterConfigurationList, row)
-                          }}><EditIcon /></StyledTableCell>
+                            handleEditModalOpen(row)
+                          }}
+                        ><EditIcon /></StyledTableCell>
                       </StyledTableRow>
                     );
                   })}
@@ -339,6 +349,11 @@ const ListMasterConfiguration = () => {
           <h2>No Data Found</h2>
         </FlexDiv>
       )}
+      {
+        editModalOpen && (
+          <UpdateMasterConfigurationList data={editedData} open={editModalOpen} setEditModalOpen={setEditModalOpen} getConfigList={getConfigList} />
+        )
+      }
       <Loader variant="m" isLoading={loader.isLoading} />
       <MsgCard
         style={{
