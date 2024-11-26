@@ -10,7 +10,7 @@ const respWidth = () =>
       : window.innerWidth < 1400
         ? "250px"
         : "300px";
-        
+
 const getResponsiveWidth = () => {
   if (window.innerWidth < 540) return "150px";
   if (window.innerWidth < 900) return "200px";
@@ -24,11 +24,12 @@ export const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: '"#42a5f5"',
     color: "#fff",
-    padding: '16px', // Adjust padding as needed
+    fontSize: 13,
+    padding: '5px', // Adjust padding as needed
   },
   [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-    padding: '8px', // Adjust padding as needed
+    fontSize: 13,
+    padding: '5px', // Adjust padding as needed
   },
   [`&`]: {
     width: getResponsiveWidth(),
@@ -39,7 +40,7 @@ export const StyledTableCell = styled(TableCell)(({ theme }) => ({
 export const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
     backgroundColor: "rgba(0, 0, 0, 0.04)",
-    fontSize: 14,
+    fontSize: 11,
   },
   // hide last border
   "&:last-child td, &:last-child th": {
