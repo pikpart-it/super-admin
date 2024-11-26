@@ -30,20 +30,42 @@ import { Loader } from "../../../../components/Loader";
 import ModalConfirmation from "../../../ProductManufacturer/OrderManagement/component/ModalConfirmation";
 import { ProductWrapper } from "../../../ProductManufacturer/Businessunits/component/AddBUForm";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import Select, { selectClasses } from '@mui/joy/Select';
+import Option from '@mui/joy/Option';
+import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
+import { moduleMasterTypes } from "../ModuleMaster/ListModules";
+import Input from '@mui/joy/Input';
+import EditIcon from '@mui/icons-material/Edit';
+import { RoutesPath } from "../../../../config/routes.config";
+import { useHistory } from "react-router-dom";
+import UpdateMasterConfigurationList from "./UpdateMasterConfigurationList";
+
 const headers = [
   "Module Name",
   "Page Name",
   "RoleName",
   "Rank",
+  "Home Tile Order",
+  "Bottom Menu Oder",
+  "Menu Order",
+  "Home Tile",
+  "Bottom",
+  "Menu",
+  "Home Tile Name",
+  "Bottom Tile Name",
+  "Menu Name",
+  "Is Active",
+  "Action",
   "Route Key",
   "Route Path",
-  "Is Active",
 ];
 
 const ListMasterConfiguration = () => {
+  const history = useHistory()
   const [masterConfigList, setMasterConfigList] = useState<any[]>([]);
   const [selectedApp, setSelectedApp] = useState<appMasterTypes>();
   const [selectedRole, setSelectedRole] = useState<appRoleMasterSetupTypes>();
+  const [selectedModule, setSelectedModule] = useState<moduleMasterTypes>()
   const [appMasterList, setAppMasterList] = useState<appMasterTypes[]>([]);
   const [appRoleMasterList, setAppRoleMasterList] = useState<
     appRoleMasterSetupTypes[]
@@ -53,6 +75,9 @@ const ListMasterConfiguration = () => {
     error: false,
     msg: "",
   });
+  const [moduleMasterList, setModuleMasterList] = useState<moduleMasterTypes[]>(
+    []
+  );
   const [removeModal, setRemoveModal] = useState<any>({
     show: false,
     type: "confirm",
@@ -62,6 +87,28 @@ const ListMasterConfiguration = () => {
     rankId: "",
     rankCode: "",
   });
+  const [editModalOpen, setEditModalOpen] = useState(false)
+  const [editedData, setEditedData] = useState([])
+  const [isHomeTile, setIsHomeTile] = useState(false);
+  const [isMenu, setIsMenu] = useState(false);
+  const [isBottomMenu, setIsBottomMenu] = useState(false);
+  const handleHomeTileChange = (e) => setIsHomeTile(e.target.checked);
+  const handleMenuChange = (e) => setIsMenu(e.target.checked);
+  const handleBottomMenuChange = (e) => setIsBottomMenu(e.target.checked);
+
+  const handleEditModalOpen = (data) => {
+    setEditedData(data)
+    setEditModalOpen(true)
+  }
+
+  const getModuleMasterList = async () => {
+    let url = `${config.baseUrl}/superAdmin/moduleMasters`;
+
+    try {
+      const { data } = await getAuthorized(url);
+      setModuleMasterList(data?.data);
+    } catch (error) { }
+  };
 
   const getAppMasterList = async () => {
     let url = `${config.baseUrl}/superAdmin/appMasters`;
@@ -74,7 +121,6 @@ const ListMasterConfiguration = () => {
 
   const getAppRoleMaster = async () => {
     let url = `${config.baseUrl}/superAdmin/appRoleMasters`;
-
     try {
       const { data } = await getAuthorized(url);
       setAppRoleMasterList(data?.data);
@@ -82,42 +128,13 @@ const ListMasterConfiguration = () => {
   };
 
   const getConfigList = async () => {
-    let url = `${config.baseUrl}/superAdmin/masterConfigurations?role_id=${selectedRole?.roleId}&rank_id=${selectedRankName?.rankId === undefined ? "" : selectedRankName?.rankId}`;
-
+    let url = `${config.baseUrl}/superAdmin/masterConfigurations?${selectedModule ? `module_id=${selectedModule?.id}` : ""}${selectedRole?.id ? `&role_id=${selectedRole?.roleId}` : ""}${selectedRankName?.rankId ? `&rank_id=${selectedRankName?.rankId}` : ""}`;
     try {
       const { data } = await getAuthorized(url);
       setMasterConfigList(data?.data);
     } catch (error) { }
   };
-  const hardDelete = async (id: number) => {
-    setloader({ ...loader, isLoading: true });
-    let url = `${config.baseUrl}/superAdmin/deleteMasterConfiguration`;
 
-    try {
-      const { data } = await postAuthorized(url, { id });
-
-      setloader({
-        ...loader,
-        isLoading: false,
-        error: data?.error,
-        msg: data?.message,
-      });
-      setTimeout(() => {
-        setloader({ ...loader, msg: "" });
-      }, 2000);
-      getConfigList();
-    } catch (error) {
-      setloader({
-        ...loader,
-        isLoading: false,
-        error: true,
-        msg: "Something Went Wrong",
-      });
-      setTimeout(() => {
-        setloader({ ...loader, msg: "" });
-      }, 5000);
-    }
-  };
   const deleteItem = async (id: number, flag: boolean) => {
     setloader({ ...loader, isLoading: true });
     let url = `${config.baseUrl}/superAdmin/toggleActiveFlag`;
@@ -155,19 +172,30 @@ const ListMasterConfiguration = () => {
     return i?.roleName === selectedRole?.roleName;
   });
 
+  // Apply filtering logic based on switch states
+  const filteredData = masterConfigList?.filter((item) => {
+    return (
+      (!isHomeTile || item.isHomeTile) &&  // Show if the switch is on and matches the item
+      (!isMenu || item.isMenu) &&
+      (!isBottomMenu || item.isBottomMenu)
+    );
+  });
+
+
   useEffect(() => {
-    if (selectedRole?.id) {
+    if (selectedApp?.appName || selectedRole?.id || selectedModule?.id || selectedRole?.id) {
       getConfigList();
     }
-  }, [selectedRole, selectedRankName]);
+  }, [selectedRole, selectedRankName, selectedModule, selectedApp]);
 
   useEffect(() => {
     getAppMasterList();
     getAppRoleMaster();
+    getModuleMasterList()
   }, []);
 
   return (
-    <div style={{ width: "90%", margin: "auto" }}>
+    <div style={{ width: "95%", margin: "auto" }}>
       <FlexDiv justifyContentCenter style={{ marginTop: "1rem" }}>
         <div style={{ fontSize: "1.3rem", color: "#f65000" }}>
           Master Configuration list
@@ -184,6 +212,39 @@ const ListMasterConfiguration = () => {
                 options={appMasterList}
                 getOptionLabel={(option: any) => option?.appName}
               />
+            </FormControl>
+          </Container>
+          <Container>
+            <FormControl>
+              <FormLabel>Module Name</FormLabel>
+              <Autocomplete
+                value={selectedModule?.moduleName}
+                options={moduleMasterList}
+                onChange={(e, value) => setSelectedModule(value)}
+                getOptionLabel={(Option: any) => Option.moduleName}
+              />
+              {/* <Select
+                indicator={<KeyboardArrowDown />}
+                sx={{
+                  width: 240,
+                  [`& .${selectClasses.indicator}`]: {
+                    transition: '0.2s',
+                    [`&.${selectClasses.expanded}`]: {
+                      transform: 'rotate(-180deg)',
+                    },
+                  },
+                }}
+                value={filterSelectedModule}
+                onChange={handleChange}
+              >
+                {
+                  moduleMasterList?.map((i, index) => {
+                    return (
+                      <Option key={index} value={i?.id}>{i?.moduleName}</Option>
+                    )
+                  })
+                }
+              </Select> */}
             </FormControl>
           </Container>
           <Container>
@@ -219,41 +280,53 @@ const ListMasterConfiguration = () => {
             </FormControl>
           </Container>
         </FlexDiv>
+        <FlexDiv alignItemsCenter>
+          <FlexDiv column>
+            <div>Is Home Tile</div>
+            <Switch checked={isHomeTile} onChange={handleHomeTileChange} />
+          </FlexDiv>
+          <FlexDiv column style={{ margin: "10px 50px" }}>
+            <div>Is Menu</div>
+            <Switch checked={isMenu} onChange={handleMenuChange} />
+          </FlexDiv>
+          <FlexDiv column>
+            <div>Is Bottom Menu</div>
+            <Switch checked={isBottomMenu} onChange={handleBottomMenuChange} />
+          </FlexDiv>
+        </FlexDiv>
       </ProductWrapper>
 
-      {masterConfigList?.length > 0 ? (
-        <FlexDiv width="100%" justifyContentCenter style={{ margin: "20px" }}>
-          <TableContainer sx={{ width: "fit-content" }} component={Paper}>
-            <Table sx={{ minWidth: "fit-content" }} aria-label="vehicle models">
-              <Header titles={headers} color="#000" />
+      {filteredData?.length > 0 ? (
+        <FlexDiv width="100%" justifyContentCenter style={{ marginTop: "1rem" }}>
+          <TableContainer>
+            <Table>
+              <Header titles={headers} color="#000" width="8%" />
               <TableBody>
-                {masterConfigList
-                  ?.sort((a, b) => b?.id - a?.id)
+                {filteredData
                   ?.map((row) => {
                     return (
                       <StyledTableRow
                         key={row?.id}
                         style={{ background: "#fff" }}
                       >
-                        <StyledTableCell align="center">
+                        <StyledTableCell align="center" style={{ width: "8%" }}>
                           {row?.moduleName}
                         </StyledTableCell>
-                        <StyledTableCell align="center">
+                        <StyledTableCell align="center" style={{ width: "8%" }}>
                           {row?.pageName}
                         </StyledTableCell>
-                        <StyledTableCell align="center">{row?.roleName}</StyledTableCell>
-                        <StyledTableCell align="center">{row?.rankCode}</StyledTableCell>
-                        {/* <StyledTableCell align="center">
-                          {row?.pageDescription}
-                        </StyledTableCell> */}
-                        <StyledTableCell align="center">
-                          {row?.routeKey}
-                        </StyledTableCell>
-                        <StyledTableCell align="center">
-                          {row?.routePath}
-                        </StyledTableCell>
-
-                        <StyledTableCell align="center">
+                        <StyledTableCell align="center" style={{ width: "8%" }}>{row?.roleName}</StyledTableCell>
+                        <StyledTableCell align="center" style={{ width: "8%" }}>{row?.rankCode}</StyledTableCell>
+                        <StyledTableCell align="center" style={{ width: "8%" }}>{row?.prioritySeq}</StyledTableCell>
+                        <StyledTableCell align="center" style={{ width: "8%" }}>{row?.bottomNo}</StyledTableCell>
+                        <StyledTableCell align="center" style={{ width: "8%" }}>{row?.menuNo}</StyledTableCell>
+                        <StyledTableCell align="center" style={{ width: "8%" }}>{row?.isHomeTile ? "true" : "false"}</StyledTableCell>
+                        <StyledTableCell align="center" style={{ width: "8%" }}>{row?.isBottomMenu ? "true" : "false"}</StyledTableCell>
+                        <StyledTableCell align="center" style={{ width: "8%" }}>{row?.isMenu ? "true" : "false"}</StyledTableCell>
+                        <StyledTableCell align="center" style={{ width: "8%" }}>{row?.homeTileName}</StyledTableCell>
+                        <StyledTableCell align="center" style={{ width: "8%" }}>{row?.bottomMenuName}</StyledTableCell>
+                        <StyledTableCell align="center" style={{ width: "8%" }}>{row?.menuName}</StyledTableCell>
+                        <StyledTableCell align="center" style={{ width: "8%" }}>
                           <Switch
                             checked={row?.isActive}
                             onChange={(e) =>
@@ -265,6 +338,22 @@ const ListMasterConfiguration = () => {
                             style={{ margin: "10px", cursor: "pointer" }}
                             onClick={() => hardDelete(row?.id)}
                           /> */}
+                        </StyledTableCell>
+                        <StyledTableCell
+                          align="center"
+                          style={{ cursor: "pointer", width: "8%" }}
+                          // onClick={() => {
+                          //   history.push(RoutesPath?.UpdateMasterConfigurationList, row)
+                          // }}
+                          onClick={() => {
+                            handleEditModalOpen(row)
+                          }}
+                        ><EditIcon /></StyledTableCell>
+                        <StyledTableCell align="center" style={{ width: "8%" }}>
+                          {row?.routeKey}
+                        </StyledTableCell>
+                        <StyledTableCell align="center" style={{ width: "8%" }}>
+                          {row?.routePath}
                         </StyledTableCell>
                       </StyledTableRow>
                     );
@@ -278,6 +367,11 @@ const ListMasterConfiguration = () => {
           <h2>No Data Found</h2>
         </FlexDiv>
       )}
+      {
+        editModalOpen && (
+          <UpdateMasterConfigurationList data={editedData} open={editModalOpen} setEditModalOpen={setEditModalOpen} getConfigList={getConfigList} />
+        )
+      }
       <Loader variant="m" isLoading={loader.isLoading} />
       <MsgCard
         style={{

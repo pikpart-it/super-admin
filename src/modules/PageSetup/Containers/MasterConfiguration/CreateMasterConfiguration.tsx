@@ -129,7 +129,7 @@ const CreateMasterConfiguration = ({ history }) => {
         rank_id: masterConfiguration?.rank?.rankId,
       }));
   };
-  console.log({ masterConfiguration });
+
   const onSubmit = async () => {
     setloader({ ...loader, isLoading: true });
     let url = `${config.baseUrl}/superAdmin/addUpdateMasterConfiguration`;
@@ -150,11 +150,6 @@ const CreateMasterConfiguration = ({ history }) => {
       setTimeout(() => {
         setloader({ ...loader, msg: "" });
       }, 5000);
-      setMasterConfiguration({
-        ...masterConfiguration,
-        app_name: { appId: "", appName: "", id: 0 },
-        module_name: { moduleId: 0, moduleName: "", routeKey: "" },
-      });
     } catch (error) {
       setloader({
         ...loader,

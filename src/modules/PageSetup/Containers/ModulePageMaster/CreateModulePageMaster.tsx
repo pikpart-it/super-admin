@@ -17,6 +17,9 @@ import ListModulePageMaster, {
   modulePageMasterTypes,
 } from "./ListModulePageMaster";
 import { ProductWrapper } from "../../../ProductManufacturer/Businessunits/component/AddBUForm";
+import Select, { selectClasses } from '@mui/joy/Select';
+import Option from '@mui/joy/Option';
+import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
 
 const CreateModulePageMaster = () => {
   const [moduleMasterList, setModuleMasterList] = useState<moduleMasterTypes[]>(
@@ -25,6 +28,10 @@ const CreateModulePageMaster = () => {
   const [modulePageMasterList, setModulePageMasterList] = useState<
     modulePageMasterTypes[]
   >([]);
+  const [FiltermodulePageMasterList, setFilterModulePageMasterList] = useState<
+    modulePageMasterTypes[]
+  >([]);
+  const [isFilterApply, setIsFilterApply] = useState(false)
   const [loader, setloader] = useState({
     isLoading: false,
     error: false,
@@ -38,6 +45,19 @@ const CreateModulePageMaster = () => {
     route_path: "",
     id: 0,
   });
+  const [filterSelectedModule, setFilterSelectedModule] = useState<number>()
+
+  const handleChange = (
+    event: React.SyntheticEvent | null,
+    newValue: number | null,
+  ) => {
+    if (newValue) {
+      const updatedModulePageMasterList = modulePageMasterList?.filter((i) => i?.moduleId === newValue)
+      setFilterModulePageMasterList(updatedModulePageMasterList)
+    }
+    setIsFilterApply(true)
+    setFilterSelectedModule(newValue || 0)
+  };
 
   const getModulePageMasterList = async () => {
     let url = `${config.baseUrl}/superAdmin/modulePageMasters`;
@@ -243,11 +263,49 @@ const CreateModulePageMaster = () => {
             </Button>
           </Container>
         </FlexDiv>
+        <FlexDiv justifyContentFlexEnd>
+          <div>Filter on Module</div>
+          <Container>
+            <Select
+              placeholder="Apply filter on list"
+              indicator={<KeyboardArrowDown />}
+              sx={{
+                width: 240,
+                [`& .${selectClasses.indicator}`]: {
+                  transition: '0.2s',
+                  [`&.${selectClasses.expanded}`]: {
+                    transform: 'rotate(-180deg)',
+                  },
+                },
+              }}
+              value={filterSelectedModule}
+              onChange={handleChange}
+            >
+              {
+                moduleMasterList?.map((i, index) => {
+                  return (
+                    <Option key={index} value={i?.id}>{i?.moduleName}</Option>
+                  )
+                })
+              }
+            </Select>
+            {/* <FormControl>
+              <Autocomplete
+                value={modulePageMaster?.module_name}
+                onChange={(e, value) =>
+                  onChange({ name: "module_name", value })
+                }
+                options={moduleMasterList}
+                getOptionLabel={(option: any) => option?.moduleName}
+              />
+            </FormControl> */}
+          </Container>
+        </FlexDiv>
       </ProductWrapper>
       <ListModulePageMaster
         deleteItem={deleteItem}
         edit={edit}
-        modulePageMasterList={modulePageMasterList}
+        modulePageMasterList={isFilterApply ? FiltermodulePageMasterList : modulePageMasterList}
       />
       <Loader variant="m" isLoading={loader.isLoading} />
       <MsgCard

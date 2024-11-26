@@ -7,21 +7,24 @@ import TableRow from "@mui/material/TableRow";
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.primary.light,
-    padding: '16px', // Adjust padding as needed
+    padding: '5px', // Adjust padding as needed
     color: theme.palette.common.white,
+    fontSize: 13,
   },
   [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-    padding: '8px', // Adjust padding as needed
+    fontSize: 13,
+    padding: '5px', // Adjust padding as needed
   },
 }));
 
 function Header({
   titles,
   color,
+  width
 }: {
   titles: string[];
   color?: string;
+  width?: string
 }): ReactElement {
   return (
     <TableHead style={{ width: "100%" }}>
@@ -31,7 +34,10 @@ function Header({
             {title && (
               <StyledTableCell
                 align="center"
-                style={color ? { backgroundColor: color } : undefined}
+                style={{
+                  backgroundColor: color || "inherit", // Set default background if no color is passed
+                  width: width || "auto",              // Apply dynamic width with a fallback
+                }}
               >
                 {title}
               </StyledTableCell>
@@ -39,7 +45,7 @@ function Header({
           </Fragment>
         ))}
       </TableRow>
-    </TableHead>
+    </TableHead >
   );
 }
 
