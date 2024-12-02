@@ -1,0 +1,24 @@
+1 - All pages should have a title with unified color and text size that describes it's activity.
+2 - All pages should have fully functional loader and feedback message.
+3 - All pages should have header,sidebar,footer unless it's not required.
+4 - Create/Edit pages should include:
+    - All mandatory fields should have * next to the field label.
+    - Submit should not be enabled untill all mandatory fields are filled and validations are passed successfully.
+    - Loader for any operation that invloves getting or sending data to backend.
+    - Feedback message for submitting data which will indicate wether the operation is a success or failure.
+    - Phone number,Email should always have proper validation.
+    - if the page contains address input -> pincode should be validted and city/state should be populated from pincode validation API response (APIs for this are given already).
+    - All these cases should be tested by the developer and verified by the tester, failure to do so will be pointed to the developer only.
+
+5 - Listing pages should include:
+    - List table should include describtive headers that correctly describes the column content.
+    - Table should not be over-sized or under-sized, it should fit the content properly with the necessary spacing.
+    - Proper sized table that fits all the included cells data.
+    - Loader for any operation that invloves interacting with backend.
+    - Feedback message for when items are added or deleted from the list.
+    - Confirmation Pop-up for delete option if it's given.
+    - given icons should be clear and describtive.
+    - In case of edit then user should be redirected back to the listing pages once the edit operation is successful.
+     
+
+NOTE: Failure to comply with these standards will result in your work not getting tested by testers and not pushed eventaully resulting in lack of productivity, so please take these things seriously.  
