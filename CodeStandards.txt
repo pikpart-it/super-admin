@@ -1,0 +1,22 @@
+1 - No unused variables.
+2 - No unused imports.
+3 - No unused functions.
+4 - No left console logs.
+5 - USE TYPESCRIPT.
+6 - Files should contain between 400-500 lines MAX.
+7 - Styled components should be declared and exported in a separate file called styled inside each module (example of modules -> Booking,Quotation,Estimation,Order management...etc).
+8 - IF the same function will be used in multiple files should be declared and exported in a separate file called helpers and used in as many places as required.
+9 - IF the same UI is created in more than 2 different places then it should be converted into a reusable component, declared once and used where ever required.
+10 - IF a component is having more than 10-15 states then you should re-think the logic and split it into separate components, this will help with debugging and cleaning the messey code.
+11 - IF the same API is being used in multiple places then you should define 1 function or custom hook that returns back this API response and use it where ever its required.
+12 - IF you're defining a state with default object or array data, then this data should be created in the helper file of this module and imported then passed to the state, this helps clean up the messey code. 
+13 - They type should be declared in the helper file of this module and imported where ever it's required.
+14 - When you're getting multiple data from API, don't use response.data.data for each object you're getting from the API, instead create one variable and use it for all the objectes coming from the API.
+15 - IF you have multiple conditions to show or hide something, don't add all the conditions inside the UI block of code, instead create one function that returns boolean and use it's return value as you condition to show or hide.
+16 - Make your code as generic as possible in order to use it later if required, this helps reduce the code base size overtime.
+
+
+
+NOTE: your new code and the code you're responsible to fix needs to pass these parameteres in order to get approved and pushed.
+
+NOTE: This file will be updated frequently, so keep an eye on it's changes from Github.
