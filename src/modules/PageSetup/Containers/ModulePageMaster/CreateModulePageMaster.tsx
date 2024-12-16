@@ -152,7 +152,6 @@ const CreateModulePageMaster = () => {
         setloader({ ...loader, msg: "" });
       }, 5000);
       getModulePageMasterList();
-      reset();
     } catch (error) {
       setloader({
         ...loader,
